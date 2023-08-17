@@ -23,7 +23,7 @@ require('dotenv').config();
     exist = await new Auth().getUserByEmail(email);
     if (exist.rowCount > 0) {
         bandera = true;       
-        response.msg = `email exist`;        
+        response.msg = `Email exist`;        
     }
     if (! bandera) {
         const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
@@ -65,8 +65,7 @@ router.post('/login', async (req, res) => {
         if (!passwordMatch) {         
             response.msg = `Incorrect password`;           
         }else{
-            // Generar el token de autenticación
-         
+            // Generar el token de autenticación         
             const token = jwt.sign({ email: user.email ,full_name:user.full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
             response.error = false;
             response.msg = `Login successfully`; 
