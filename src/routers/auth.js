@@ -56,7 +56,7 @@ router.post('/login', async (req, res) => {
     const {email, password} = req.body
     const result = await new Auth().getUserByEmail(email);
     if (result.rowCount == 0) {  
-        response.msg = `user does not exist`;     
+        response.msg = `User does not exist`;     
     } else{
         const user = result.rows[0];
 
@@ -69,12 +69,11 @@ router.post('/login', async (req, res) => {
          
             const token = jwt.sign({ email: user.email ,full_name:user.full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
             response.error = false;
-            response.msg = `login successful`; 
-            response.data = token
+            response.msg = `Login successfully`; 
+            response.data = { user, token }
             status = 200
         }
-    }
- 
+    } 
     res.status(status).json(response)
 });
  
@@ -92,12 +91,12 @@ router.get('/activate_account', async (req, res) => {
     const result = await new Auth().getUserByToken(token);
    
     if (result.rowCount == 0) {  
-        response.msg = `user does not exist`;     
+        response.msg = `User does not exist`;     
     } else{
         // Verificar si el token ha expirado
         const isTokenExpired = Date.now() >= decoded.exp * 1000;    
         if (isTokenExpired) {
-            response.msg = `the activation link has expired`;            
+            response.msg = `The activation link has expired`;            
         }else{
     
         const result_act = await new Auth().activateUser(email);    
@@ -112,8 +111,7 @@ router.get('/activate_account', async (req, res) => {
                 response.msg = `Error activated account`; 
             }
         }
-    }
- 
+    } 
     res.status(status).json(response)
 });
 
@@ -128,7 +126,7 @@ router.post('/link_password', async (req, res) => {
     const result = await new Auth().getUserByEmail(email);
    
     if (result.rowCount == 0) {  
-        response.msg = `user does not exist`;     
+        response.msg = `User does not exist`;     
     } else {
        const user = result.rows[0];
         const token = jwt.sign({ email: user.email ,full_name:user.full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
@@ -137,8 +135,7 @@ router.post('/link_password', async (req, res) => {
         response.msg = `Send email link reset password`; 
         response.data = token
         status = 200     
-    }
-     
+    }     
     res.status(status).json(response)
 });
  
@@ -155,21 +152,20 @@ router.get('/reset_password', async (req, res) => {
     const full_name = decoded.full_name;
     const result = await new Auth().getUserByEmail(email);
     if (result.rowCount == 0) {  
-        response.msg = `user does not exist`;     
+        response.msg = `User does not exist`;     
     } else{
         // Verificar si el token ha expirado
         const isTokenExpired = Date.now() >= decoded.exp * 1000;    
             if (isTokenExpired) {
-                response.msg = `the activation link has expired`;            
+                response.msg = `The activation link has expired`;            
             }else{    
                 const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
                 response.error = false;
-                response.msg = `validate token successfully`; 
+                response.msg = `Validate account successfully`; 
                 response.data = token
                 status = 200
             }
-        } 
- 
+        }  
     res.status(status).json(response)
 });
 
@@ -186,16 +182,16 @@ router.post('/change_password', async (req, res) => {
     const result = await new Auth().getUserByEmail(email);
    
     if (result.rowCount === 0) {  
-        response.msg = `user does not exist`;     
+        response.msg = `User does not exist`;     
     } else {
        const user = result.rows[0];       
 
        // Compara la contraseña ingresada con el hash almacenado
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {         
-            response.msg = `current password does not match`;           
+            response.msg = `Current password does not match`;           
         }   else if (password === new_password) {
-                response.msg = `the new password must not be the same as the current one`;      
+                response.msg = `The new password must not be the same as the current one`;      
             }else  {
             const saltRounds = 10;
             const salt = await bcrypt.genSalt(saltRounds);
@@ -208,8 +204,7 @@ router.post('/change_password', async (req, res) => {
                 response.msg = `Change password successfully`;            
                 status = 200     
              }
-        }
-   
+        }   
 }
     res.status(status).json(response)
 });

@@ -7,3 +7,10 @@ CREATE TABLE mypick.users (
   photo BYTEA,
   token TEXT
 );
+
+
+CREATE TABLE mypick.category (
+  id SERIAL PRIMARY KEY,
+  category VARCHAR(255) NOT NULL,
+  status  VARCHAR(10) NOT NULL 
+);

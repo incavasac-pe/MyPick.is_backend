@@ -9,7 +9,7 @@ app.use(bodyParser.json({limit: '10mb', extended: true}))
 app.use(bodyParser.urlencoded({limit: '10mb', extended: true}))
 app.use(cors());
 app.use(fileUpload());
-const PORT = process.env.PORT || 3000;
+const PORT = process.env.PORT || 3100;
  
 app.get('/', (request, response) => {
     response.json({ info: 'Node.js, Express, and Postgres API' })
@@ -18,8 +18,11 @@ app.get('/', (request, response) => {
 
   //import the routes
 const userRoutes = require('./src/routers/auth'); 
+const categoryRoutes = require('./src/routers/category'); 
 
 app.use(userRoutes); 
+app.use(categoryRoutes); 
+
   app.listen(PORT, () => {
     console.log(`App running on port ${PORT}.`)
   })
