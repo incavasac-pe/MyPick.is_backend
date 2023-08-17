@@ -23,7 +23,7 @@ require('dotenv').config();
     exist = await new Auth().getUserByEmail(email);
     if (exist.rowCount > 0) {
         bandera = true;       
-        response.msg = `email exist`;        
+        response.msg = `The email is already registered`;        
     }
     if (! bandera) {
         const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
