@@ -3,8 +3,11 @@ const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
 const Auth = require('../controllers/auth');
+const EmailSender = new require('../services/send_email')
+const emailSender = new EmailSender();
 require('dotenv').config();
-
+ 
+  
  router.post('/register', async (req, res) => {
     const response = newResponseJson();
     let status = 400;
@@ -36,6 +39,15 @@ require('dotenv').config();
         } else {
            
             //enviar correo con el token  de validacion de cuenta
+             // Ejemplo de envío de correo
+           console.log("se procede con el envio de correo")
+           emailSender.sendEmail(email, 'Activation email', '',token)
+           .then(response => {
+                   console.log('Correo enviado:', response);
+           })
+           .catch(error => {
+               console.log('Error al enviar el correo:', error);
+           }); 
             response.error = false;
             response.msg = `Successful registration`; 
             response.data =  token
@@ -49,6 +61,7 @@ require('dotenv').config();
  
 // inicio de sesion app
 router.post('/login', async (req, res) => {
+
     const response = newResponseJson();
     response.msg = 'Welcome!';
     let status = 401;
@@ -58,20 +71,18 @@ router.post('/login', async (req, res) => {
     if (result.rowCount == 0) {  
         response.msg = `User does not exist`;     
     } else{
-        const user = result.rows[0];
-
-          // Compara la contraseña ingresada con el hash almacenado
+        const user = result.rows[0]; 
         const passwordMatch = await bcrypt.compare(password, user.password);
         if (!passwordMatch) {         
             response.msg = `Incorrect password`;           
         }else{
-            // Generar el token de autenticación
-         
+            // Generar el token de autenticación         
             const token = jwt.sign({ email: user.email ,full_name:user.full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
             response.error = false;
             response.msg = `Login successfully`; 
             response.data = { user, token }
             status = 200
+          
         }
     } 
     res.status(status).json(response)
@@ -79,40 +90,40 @@ router.post('/login', async (req, res) => {
  
 
 router.get('/activate_account', async (req, res) => {
+    try{
     const response = newResponseJson();
     response.msg = 'Activate!';
     let status = 400;
     response.error = true;
-
-    const token = req.query.token;
+    const token = req.query.token; 
+ 
     const decoded = jwt.verify(token, process.env.SECRETKEY)
+     
     const email = decoded.email;
     const full_name = decoded.full_name;;
-    const result = await new Auth().getUserByToken(token);
-   
+    const result = await new Auth().getUserByEmail(email);
+    const user = result.rows[0]; 
     if (result.rowCount == 0) {  
         response.msg = `User does not exist`;     
-    } else{
-        // Verificar si el token ha expirado
-        const isTokenExpired = Date.now() >= decoded.exp * 1000;    
-        if (isTokenExpired) {
-            response.msg = `The activation link has expired`;            
-        }else{
-    
-        const result_act = await new Auth().activateUser(email);    
-        
+    } else{           
+        const result_act = await new Auth().activateUser(email);            
             if(result_act.rowCount >0){      
                 const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
                 response.error = false;
                 response.msg = `Account activated successfully`; 
-                response.data = token
+                response.data =  { user, token }
                 status = 200
             }else{   
                 response.msg = `Error activated account`; 
-            }
-        }
+            }      
     } 
-    res.status(status).json(response)
+  res.status(status).json(response)
+} catch (error) {
+    if (error.name === 'TokenExpiredError') { 
+      res.status(500).json({msg:'Token expired',error:true})
+    }
+    res.status(500).json({msg:'Invalid token',error:true})  
+  }
 });
 
 
@@ -147,26 +158,27 @@ router.get('/reset_password', async (req, res) => {
     response.error = true;
 
     const token = req.query.token;
+    try {
     const decoded = jwt.verify(token, process.env.SECRETKEY)
     const email = decoded.email;
     const full_name = decoded.full_name;
     const result = await new Auth().getUserByEmail(email);
     if (result.rowCount == 0) {  
         response.msg = `User does not exist`;     
-    } else{
-        // Verificar si el token ha expirado
-        const isTokenExpired = Date.now() >= decoded.exp * 1000;    
-            if (isTokenExpired) {
-                response.msg = `The activation link has expired`;            
-            }else{    
-                const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
-                response.error = false;
-                response.msg = `Validate account successfully`; 
-                response.data = token
-                status = 200
-            }
+    } else{ 
+            const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
+            response.error = false;
+            response.msg = `Validate account successfully`; 
+            response.data = token
+            status = 200            
         }  
     res.status(status).json(response)
+} catch (error) {
+    if (error.name === 'TokenExpiredError') { 
+      res.status(500).json({msg:'Token expired',error:true})
+    }
+    res.status(500).json({msg:'Invalid token',error:true})  
+  }
 });
 
 
