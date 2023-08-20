@@ -6,7 +6,6 @@ const Auth = require('../controllers/auth');
 const EmailSender = new require('../services/send_email')
 const emailSender = new EmailSender();
 require('dotenv').config();
- 
   
  router.post('/register', async (req, res) => {
     const response = newResponseJson();
@@ -76,7 +75,8 @@ router.post('/login', async (req, res) => {
         if (!passwordMatch) {         
             response.msg = `Incorrect password`;           
         }else{
-            // Generar el token de autenticación         
+            // Generar el token de autenticación     
+           
             const token = jwt.sign({ email: user.email ,full_name:user.full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
             response.error = false;
             response.msg = `Login successfully`; 
@@ -190,7 +190,7 @@ router.post('/change_password', async (req, res) => {
   
       // Realiza el hash de la contraseña con el salt
      
-    const {email,password,new_password} = req.body  
+    const {email,new_password} = req.body  
     const result = await new Auth().getUserByEmail(email);
    
     if (result.rowCount === 0) {  
@@ -199,25 +199,44 @@ router.post('/change_password', async (req, res) => {
        const user = result.rows[0];       
 
        // Compara la contraseña ingresada con el hash almacenado
-        const passwordMatch = await bcrypt.compare(password, user.password);
-        if (!passwordMatch) {         
-            response.msg = `Current password does not match`;           
-        }   else if (password === new_password) {
-                response.msg = `The new password must not be the same as the current one`;      
-            }else  {
+        const passwordMatch = await bcrypt.compare(new_password, user.password);
+        if (passwordMatch) {         
+            response.msg = `The new password must not be the same as the current one`;       
+        } else  {
             const saltRounds = 10;
             const salt = await bcrypt.genSalt(saltRounds);
             const hashedPassword = await bcrypt.hash(new_password, salt);
             const result_act = await new Auth().updateUser(hashedPassword,email);    
-     
-            if(result_act.rowCount === 1){  
-                //ENVIAR CORREO EL LINK CON EL TOKEN
-                response.error = false;
-                response.msg = `Change password successfully`;            
-                status = 200     
-             }
+    
+        if(result_act.rowCount === 1){   
+            response.error = false;
+            response.msg = `Change password successfully`;            
+            status = 200     
+            }
         }   
-}
+    }
+    res.status(status).json(response)
+});
+   
+router.post('/change_profile', async (req, res) => {
+    const response = newResponseJson();
+    response.msg = 'Change Profile';
+    let status = 400;
+    response.error = true;   
+     
+    const {email,full_name} = req.body  
+    const result = await new Auth().getUserByEmail(email);
+   
+    if (result.rowCount === 0) {  
+        response.msg = `User does not exist`;     
+    } else { 
+       const result_act = await new Auth().updateProfile(full_name,email);        
+        if(result_act.rowCount === 1){   
+            response.error = false;
+            response.msg = `Change profile successfully`;            
+            status = 200                  
+        }   
+    }
     res.status(status).json(response)
 });
    

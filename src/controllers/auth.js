@@ -52,6 +52,35 @@ class Auth {
        }  
        return response
     }
+    
+
+    async updateProfile(full_name, email) {
+        let response
+        try {
+            const query = 'UPDATE mypick.users SET full_name = $1 WHERE email = $2';
+            const values = [full_name,email];
+            const result = await db.query(query, values);           
+            response = result
+       
+     } catch (err) { 
+        response = err;
+       }  
+       return response
+    }
+ 
+    async updatePhoto(photo, email) {
+        let response
+        try {
+            const query = 'UPDATE mypick.users SET photo = $1 WHERE email = $2';
+            const values = [photo,email];
+            const result = await db.query(query, values);           
+            response = result
+       
+     } catch (err) { 
+        response = err;
+       }  
+       return response
+    }
               
 }
 

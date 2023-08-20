@@ -19,9 +19,11 @@ app.get('/', (request, response) => {
   //import the routes
 const userRoutes = require('./src/routers/auth'); 
 const categoryRoutes = require('./src/routers/category'); 
+const upload = require('./src/routers/upload');
 
 app.use(userRoutes); 
 app.use(categoryRoutes); 
+app.use(upload); 
 
   app.listen(PORT, () => {
     console.log(`App running on port ${PORT}.`)
