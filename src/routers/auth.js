@@ -40,7 +40,7 @@ require('dotenv').config();
             //enviar correo con el token  de validacion de cuenta
              // Ejemplo de envío de correo
            console.log("se procede con el envio de correo")
-           emailSender.sendEmail(email, 'Activation email', '',token)
+           emailSender.sendEmail(email, 'Activation email', '',token,1)
            .then(response => {
                    console.log('Correo enviado:', response);
            })
@@ -141,7 +141,15 @@ router.post('/link_password', async (req, res) => {
     } else {
        const user = result.rows[0];
         const token = jwt.sign({ email: user.email ,full_name:user.full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
-        //ENVIAR CORREO EL LINK CON EL TOKEN
+        //ENVIAR CORREO EL LINK CON EL TOKEN        
+            console.log("se procede con el envio de correo")
+            emailSender.sendEmail(email, 'Reset password', '',token,2)
+            .then(response => {
+                    console.log('Correo enviado:', response);
+            })
+            .catch(error => {
+                console.log('Error al enviar el correo:', error);
+            }); 
         response.error = false;
         response.msg = `Send email link reset password`; 
         response.data = token
@@ -169,7 +177,7 @@ router.get('/reset_password', async (req, res) => {
             const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
             response.error = false;
             response.msg = `Validate account successfully`; 
-            response.data = token
+            response.data = {email,token}
             status = 200            
         }  
     res.status(status).json(response)

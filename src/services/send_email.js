@@ -15,25 +15,43 @@ class EmailSender {
     });
   }
 
-  sendEmail(to, subject, text,value) {
-    const mailOptions = {
-      from: process.env.EMAIL_ADDRESS,
-      to: to,
-      subject: subject,
-      text: text,
-      html:`<!DOCTYPE html>
-      <html>
-       <head>
-           <meta name="viewport" content="width=device-width">
-           <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">     
-       </head>
-       <body>
-       <h1>Welcome to MyPick!</h1>
-       <p>Please activate your account by clicking on the following link:</p>
-       <a href="http://localhost:3000/activate?token=${value}">Activate account here</a>
-       </body>
-      </html>` 
-    };
+  sendEmail(to, subject, text,value,type) {
+                let html;
+            if(type==1){
+            html = `<!DOCTYPE html>
+            <html>
+            <head>
+                <meta name="viewport" content="width=device-width">
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">     
+            </head>
+            <body>
+            <h1>Welcome to MyPick!</h1>
+            <p>Please activate your account by clicking on the following link:</p>
+            <a href="http://localhost:3000/activate?token=${value}">Activate account here</a>
+            </body>
+            </html>` 
+            }else{
+                html = `<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta name="viewport" content="width=device-width">
+                    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">     
+                </head>
+                <body>
+                <h1>Reset to MyPick!</h1>
+                <p>Please reset your password by clicking on the following link:</p>
+                <a href="http://localhost:3000/resetPassword?token=${value}">Reset password here</a>
+                </body>
+                </html>` 
+            }
+
+        const mailOptions = {
+        from: process.env.EMAIL_ADDRESS,
+        to: to,
+        subject: subject,
+        text: text,
+        html: html
+        };
 
     return new Promise((resolve, reject) => {
       this.transporter.sendMail(mailOptions, (error, info) => {
