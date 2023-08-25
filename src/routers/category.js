@@ -7,8 +7,9 @@ router.get('/list_category', async (req, res) => {
     const response = newResponseJson();
     let status = 400; 
     response.error = true; 
+    const limit = req.query.limit;
  
-    exist = await new Category().getCategoryAll();
+    exist = await new Category().getCategoryAll(limit);
     
     if (exist.rowCount === 0) {              
         response.msg = `category empty`;        
