@@ -5,6 +5,16 @@ const Choice = require('../controllers/choice');
 const Category =  require('../controllers/category');
 const Auth = require('../controllers/auth');
 
+
+const path = require('path'); 
+const fs = require('fs');  
+
+router.get('/', function (req, res) {
+  res.render('uploadForm.ejs')
+})
+ 
+const _dirname = './public/uploads';
+
 router.get('/list_all_picks', async (req, res) => {
     const response = newResponseJson();
     let status = 400; 
@@ -20,8 +30,7 @@ router.get('/list_all_picks', async (req, res) => {
             response.msg = `List picks`; 
             response.data =  exist.rows
             status = 200;        
-    }
-    
+    }    
     res.status(status).json(response)
 });
   
@@ -57,8 +66,19 @@ router.post('/register_picks', async (req, res) => {
     let status = 400;
     response.error = true;
     
-    const { email,id_category, name_choice1, name_choice2, photo1, photo2 } = req.body;    
-
+    const { email,id_category, name_choice1, name_choice2  } = req.body;   
+  
+    let EDFile1 = req.files.photo1; 
+    EDFile1.mv(`${_dirname}/${EDFile1.name}`,err => { 
+        if(err){ return res.status(500).send({ message : err })}
+       
+    })
+   
+    let EDFile2 = req.files.photo2; 
+    EDFile2.mv(`${_dirname}/${EDFile2.name}`,err => { 
+        if(err){ return res.status(500).send({ message : err })}       
+    })
+   
     const result_user = await new Auth().getUserByEmail(email);
     if (result_user.rowCount == 0) {  
         response.msg = `User does not exist`;  
@@ -76,9 +96,9 @@ router.post('/register_picks', async (req, res) => {
       response.msg = 'category not  exists';
       return res.status(status).json(response);
     }
-    
-    let result_insert_choice1 = await new Choice().createChoices(name_choice1, photo1);
-    let result_insert_choice2 = await new Choice().createChoices(name_choice2, photo2);
+   
+    let result_insert_choice1 = await new Choice().createChoices(name_choice1, EDFile1.name);
+    let result_insert_choice2 = await new Choice().createChoices(name_choice2, EDFile2.name);
 
     if (!result_insert_choice1?.rowCount || result_insert_choice1?.rowCount === 0) {
       response.msg = 'An error occurred while trying to create choice_1';
