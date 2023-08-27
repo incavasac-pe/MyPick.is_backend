@@ -20,10 +20,14 @@ app.get('/', (request, response) => {
 const userRoutes = require('./src/routers/auth'); 
 const categoryRoutes = require('./src/routers/category'); 
 const upload = require('./src/routers/upload');
+const picks = require('./src/routers/picks');
+const bookmarks = require('./src/routers/bookmarks');
 
 app.use(userRoutes); 
 app.use(categoryRoutes); 
 app.use(upload); 
+app.use(picks);
+app.use(bookmarks);
 
   app.listen(PORT, () => {
     console.log(`App running on port ${PORT}.`)
