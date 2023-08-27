@@ -54,9 +54,9 @@ CREATE TABLE mypick.picks (
 	likes varchar(10) NULL,
 	status varchar(10) NULL,
 	id_user int4 NULL,
+	 created_at TIMESTAMPTZ NOT NULL DEFAULT NOW(),
 	CONSTRAINT picks_pkey PRIMARY KEY (id_pick)
 );
-
 -- mypick.users definition
 
 -- .

@@ -110,13 +110,13 @@ router.post('/register_picks', async (req, res) => {
       status = 500;
       return res.status(status).json(response);
     }
-    
+   
     let result_insert_pick = await new Picks()
     .createPicks(
             id_category,
             result_insert_choice1.rows[0].id_choice,
             result_insert_choice2.rows[0].id_choice,
-            result_user.rows[0].id
+            result_user.rows[0].id,         
          );
   
     if (!result_insert_pick?.rowCount || result_insert_pick?.rowCount === 0) {
