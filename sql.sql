@@ -59,7 +59,8 @@ CREATE TABLE mypick.picks (
 
 -- mypick.users definition
 
--- Drop table
+-- .
+Drop table
 
 -- DROP TABLE mypick.users;
 
@@ -73,4 +74,19 @@ CREATE TABLE mypick.users (
 	"token" text NULL,
 	CONSTRAINT users_email_key UNIQUE (email),
 	CONSTRAINT users_pkey PRIMARY KEY (id)
+);
+
+
+-- mypick.bookmarks definition
+
+-- .
+Drop table
+
+-- DROP TABLE mypick.bookmarks;
+
+CREATE TABLE mypick.bookmarks (
+	id_bookmarks serial NOT NULL,
+	id_pick  integer, 
+	id_user int4 NULL,
+	CONSTRAINT bookmarks_pkey PRIMARY KEY (id_bookmarks)
 );

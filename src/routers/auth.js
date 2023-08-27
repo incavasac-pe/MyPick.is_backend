@@ -29,7 +29,8 @@ require('dotenv').config();
     }
     if (! bandera) {
         const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
-        let usuarios = await new Auth().createUser(full_name, email, hashedPassword,token);
+        const username = full_name.substring(0, 8)
+        let usuarios = await new Auth().createUser(full_name, email, hashedPassword,token,username);
 
         if (! usuarios ?. rowCount || usuarios ?. rowCount == 0) {           
             response.msg = `An error occurred while trying to create a user`;
