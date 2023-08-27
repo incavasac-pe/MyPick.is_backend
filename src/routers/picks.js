@@ -70,8 +70,7 @@ router.post('/register_picks', async (req, res) => {
   
     let EDFile1 = req.files.photo1; 
     EDFile1.mv(`${_dirname}/${EDFile1.name}`,err => { 
-        if(err){ return res.status(500).send({ message : err })}
-       
+        if(err){ return res.status(500).send({ message : err })}       
     })
    
     let EDFile2 = req.files.photo2; 

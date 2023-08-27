@@ -10,6 +10,8 @@ class Picks {
         c.picks AS pick_ranking,
         c1.name_choice AS choice1_name,
         c2.name_choice AS choice2_name,
+        c1.photo_choice AS photo1_name,
+        c2.photo_choice AS photo2_name,
         p.likes,
         p.status
       FROM mypick.picks p
@@ -28,6 +30,8 @@ class Picks {
         c.picks AS pick_ranking,
         c1.name_choice AS choice1_name,
         c2.name_choice AS choice2_name,
+        c1.photo_choice AS photo1_name,
+        c2.photo_choice AS photo2_name,
         p.likes,
         p.status
       FROM mypick.picks p
