@@ -4,7 +4,7 @@ class Picks {
         
     async getPicksAll() {       
         let results = await db.query(`SELECT
-        p.id_pick,
+        p.id_pick AS id,
         c.name AS category,
         c.status,
         c.picks AS pick_ranking,
@@ -14,7 +14,7 @@ class Picks {
         c2.photo_choice AS photo2_name,
         p.likes,
         p.status,
-        p.created_at AS fecha
+        p.created_at AS datePicked
       FROM mypick.picks p
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
@@ -24,8 +24,8 @@ class Picks {
 
    
     async getPicks(user) {       
-        let results = await db.query(`SELECT
-        p.id_pick,
+      const newLocal = `SELECT
+        p.id_pick AS id,
         c.name AS category,
         c.status,
         c.picks AS pick_ranking,
@@ -35,13 +35,14 @@ class Picks {
         c2.photo_choice AS photo2_name,
         p.likes,
         p.status,
-        p.created_at AS fecha
+        p.created_at AS datePicked
       FROM mypick.picks p
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
       JOIN mypick.category c ON p.id_category::integer = c.id
       JOIN mypick.users u ON p.id_user::integer = u.id
-      WHERE p.id_user =$1`, [user]).catch(console.log); 
+      WHERE p.id_user =$1`;
+        let results = await db.query(newLocal, [user]).catch(console.log); 
         return results ;
     }
  
