@@ -233,14 +233,18 @@ router.post('/change_profile', async (req, res) => {
     let status = 400;
     response.error = true;   
      
-    const {email,full_name} = req.body  
+    const {email,new_email,full_name} = req.body  
     const result = await new Auth().getUserByEmail(email);
    
     if (result.rowCount === 0) {  
         response.msg = `User does not exist`;     
     } else { 
-       const result_act = await new Auth().updateProfile(full_name,email);        
+       const result_act = await new Auth().updateProfile(full_name,new_email,email);        
         if(result_act.rowCount === 1){   
+            const email_search = new_email !='' ? new_email :  email;
+            const result_user = await new Auth().getUserByEmail(email_search);
+            const user = result_user.rows[0]; 
+            response.data = { user }
             response.error = false;
             response.msg = `Change profile successfully`;            
             status = 200                  
