@@ -9,7 +9,7 @@ class Picks {
         c2.id_choice AS id_choice2,
         c.name AS category,
         c.status,
-        c.picks AS pick_ranking,
+        p.picks AS pick_ranking,
         c1.name_choice AS choice1_name,
         c2.name_choice AS choice2_name,
         c1.photo_choice AS photo1_name,
@@ -31,14 +31,16 @@ class Picks {
         p.id_pick AS id,
         c.name AS category,
         c.status,
-        c.picks AS pick_ranking,
+        p.picks AS pick_ranking,
         c1.name_choice AS choice1_name,
         c2.name_choice AS choice2_name,
         c1.photo_choice AS photo1_name,
         c2.photo_choice AS photo2_name,
         p.likes,
         p.status,
-        p.created_at AS datePicked
+        p.created_at AS datePicked,
+        c1.selected AS selectd1,
+        c2.selected AS selectd2
       FROM mypick.picks p
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
@@ -84,7 +86,7 @@ class Picks {
     c.id_choice,
     c.name_choice,
     c.selected,
-    (c.selected::numeric / p.picks) * 100 AS percentage_selected
+    ROUND((c.selected::numeric / p.picks) * 100, 2) AS percentage_selected
 FROM
     mypick.choice c
 JOIN
@@ -96,7 +98,7 @@ JOIN
     c.id_choice,
     c.name_choice,
     c.selected,
-    (c.selected::numeric / p.picks) * 100 AS percentage_selected
+    ROUND((c.selected::numeric / p.picks) * 100, 2) AS percentage_selected
 FROM
     mypick.choice c
 JOIN

@@ -141,7 +141,7 @@ router.post('/register_picks', async (req, res) => {
     const { id_pick, id_choice } = req.body;   
     
 
-    if (id_pick.trim() === '' || id_choice.trim() === '') {
+    if (id_pick === '' || id_choice === '') {
       response.msg = 'empty data';
       return res.status(status).json(response);
     }
