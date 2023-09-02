@@ -26,6 +26,19 @@ class Choice {
        return response
     } 
 
+    async updateRankinkChoice(id_choice) {
+        let response
+        try {
+            const query = 'UPDATE mypick.choice SET selected = selected + 1 where id_choice =$1';
+            const values = [id_choice];
+            const result_insert = await db.query(query, values);           
+            response = result_insert
+       
+     } catch (err) { 
+        response = err;
+       }  
+       return response
+    }
               
 }
 

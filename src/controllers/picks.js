@@ -2,9 +2,11 @@
 
 class Picks {
         
-    async getPicksAll() {       
+    async getPicksAll(limit) {       
         let results = await db.query(`SELECT
         p.id_pick AS id,
+        c1.id_choice AS id_choice1,
+        c2.id_choice AS id_choice2,
         c.name AS category,
         c.status,
         c.picks AS pick_ranking,
@@ -18,7 +20,8 @@ class Picks {
       FROM mypick.picks p
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
-      JOIN mypick.category c ON p.id_category::integer = c.id ` ).catch(console.log); 
+      JOIN mypick.category c ON p.id_category::integer = c.id 
+      LIMIT ${limit}` ).catch(console.log); 
         return results ;
     }
 
@@ -59,6 +62,49 @@ class Picks {
        }  
        return response
     }
+
+    async updateRankinkPicks(id_pick) {
+      let response
+      try {
+          const query = 'UPDATE mypick.picks   SET picks = picks + 1 where id_pick =$1';
+          const values = [id_pick];
+          const result_insert = await db.query(query, values);           
+          response = result_insert
+     
+   } catch (err) { 
+      response = err;
+     }  
+     return response
+  }
+ 
+   
+  async getPicksPorcentage(id_pick) {       
+    const newLocal = `SELECT
+    p.id_pick,
+    c.id_choice,
+    c.name_choice,
+    c.selected,
+    (c.selected::numeric / p.picks) * 100 AS percentage_selected
+FROM
+    mypick.choice c
+JOIN
+    mypick.picks p ON c.id_choice = p.id_choice1 
+    where id_pick = $1
+   union all 
+     SELECT
+    p.id_pick,
+    c.id_choice,
+    c.name_choice,
+    c.selected,
+    (c.selected::numeric / p.picks) * 100 AS percentage_selected
+FROM
+    mypick.choice c
+JOIN
+    mypick.picks p ON c.id_choice = p.id_choice2 
+    where id_pick = $2 `;
+      let results = await db.query(newLocal, [id_pick,id_pick]).catch(console.log); 
+      return results ;
+  }
 
               
 }
