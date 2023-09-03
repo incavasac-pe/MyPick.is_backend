@@ -169,6 +169,30 @@ router.post('/register_picks', async (req, res) => {
     res.status(status).json(response);
   });
 
+  router.post('/register_like', async (req, res) => {
+    const response = newResponseJson();
+    let status = 400;
+    response.error = true;
+    
+    const { id_pick } = req.body;    
+    if (id_pick === '' ) {
+      response.msg = 'empty data';
+      return res.status(status).json(response);
+    }
+    
+    const pick_update = await new Picks().updateLikesPicks(id_pick);  
+    
+    if (!pick_update?.rowCount || pick_update.rowCount === 0) {
+      response.msg = 'An error occurred while trying to update mypicks likes';
+      return res.status(status).json(response);
+    } 
+     
+    response.error = false;
+    response.msg = 'Like pick successfully';   
+    status = 200;
+    
+    res.status(status).json(response);
+  });
 function newResponseJson() {
     return {error: true, msg: "", data: []};
 }

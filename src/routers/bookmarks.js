@@ -1,7 +1,7 @@
 const express = require("express"); 
 const router = express.Router();
 const Bookmarks = require('../controllers/bookmarks');
-
+const Auth = require('../controllers/auth');
 
 router.get('/list_bookmarks', async (req, res) => {
     const response = newResponseJson();
@@ -28,7 +28,14 @@ router.get('/my_bookmarks', async (req, res) => {
     const response = newResponseJson();
     let status = 400; 
     response.error = true; 
-    const id_user = req.query.id_user;
+    const email = req.query.email;
+
+    const result_user = await new Auth().getUserByEmail(email);
+    if (result_user.rowCount == 0) {  
+        response.msg = `User does not exist`;  
+        return res.status(status).json(response);   
+    } 
+    const id_user = result_user.rows[0].id  
  
     exist = await new Bookmarks().getBookmarksByUser (id_user);
     
@@ -49,12 +56,19 @@ router.get('/my_bookmarks', async (req, res) => {
     let status = 400;
     let bandera = false;
     response.error = true;
-    const { id_pick, id_user} = req.body;
+    const { id_pick, email} = req.body;
      
-    if (id_pick == "" || id_user == "") {
+    if (id_pick == "" || email == "") {
         bandera = true;        
         response.msg = 'empty data';      
     }
+    const result_user = await new Auth().getUserByEmail(email);
+    if (result_user.rowCount == 0) {  
+        response.msg = `User does not exist`;  
+        return res.status(status).json(response);   
+    } 
+    const id_user = result_user.rows[0].id  
+
     exist = await new Bookmarks().getBookmarksByUserIdPick (id_user,id_pick);    
     if (exist.rowCount > 0) {
         bandera = true;       
@@ -68,7 +82,7 @@ router.get('/my_bookmarks', async (req, res) => {
             status = 500;            
         } else { 
             response.error = false;
-            response.msg = `category is created successfully`; 
+            response.msg = `Bookmark is created successfully`; 
             response.data =  result_insert.rows[0].id
             status = 201;
         }
