@@ -53,15 +53,20 @@ class Auth {
        return response
     }
     
-
-    async updateProfile(full_name, email) {
+    async updateProfile(full_name,new_email,email) {
         let response
-        try {
+        try {         
+
             const query = 'UPDATE mypick.users SET full_name = $1 WHERE email = $2';
             const values = [full_name,email];
             const result = await db.query(query, values);           
             response = result
-       
+
+            if(new_email !=''){
+                const query = 'UPDATE mypick.users SET email = $1 WHERE email = $2';
+                const values = [new_email,email];
+                await db.query(query, values); 
+            }
      } catch (err) { 
         response = err;
        }  

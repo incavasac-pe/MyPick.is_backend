@@ -19,8 +19,8 @@ router.get('/list_all_picks', async (req, res) => {
     const response = newResponseJson();
     let status = 400; 
     response.error = true;  
- 
-    exist = await new Picks().getPicksAll();
+    const limit = req.query.limit ?? 100;
+    exist = await new Picks().getPicksAll(limit);
     
     if (exist.rowCount === 0) {              
         response.msg = `picks empty`;        
@@ -129,6 +129,42 @@ router.post('/register_picks', async (req, res) => {
     response.msg = 'Category created successfully';
     response.data = result_insert_pick.rows[0].id_pick;
     status = 201;
+    
+    res.status(status).json(response);
+  });
+
+  router.post('/select_picks', async (req, res) => {
+    const response = newResponseJson();
+    let status = 400;
+    response.error = true;
+    
+    const { id_pick, id_choice } = req.body;   
+    
+
+    if (id_pick === '' || id_choice === '') {
+      response.msg = 'empty data';
+      return res.status(status).json(response);
+    }
+    
+    const pick_update = await new Picks().updateRankinkPicks(id_pick);  
+    
+    if (!pick_update?.rowCount || pick_update.rowCount === 0) {
+      response.msg = 'An error occurred while trying to update mypicks';
+      return res.status(status).json(response);
+    }
+    const choice_update = await new Choice().updateRankinkChoice(id_choice);   
+
+    if (!choice_update?.rowCount || choice_update?.rowCount === 0) {
+      response.msg = 'An error occurred while trying to update choice_1';
+      status = 500;
+      return res.status(status).json(response);
+    }
+    const picks_percente = await new Picks().getPicksPorcentage(id_pick);
+     
+    response.error = false;
+    response.msg = 'Select pick successfully';
+    response.data = picks_percente.rows
+    status = 200;
     
     res.status(status).json(response);
   });
