@@ -14,13 +14,14 @@ class Picks {
         c2.name_choice AS choice2_name,
         c1.photo_choice AS photo1_name,
         c2.photo_choice AS photo2_name,
-        p.likes,
+        COALESCE(p.likes::integer, 0) AS likes,
         p.status,
         p.created_at AS datePicked
       FROM mypick.picks p
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
       JOIN mypick.category c ON p.id_category::integer = c.id 
+      ORDER BY p.update_at desc 
       LIMIT ${limit}` ).catch(console.log); 
         return results ;
     }
@@ -36,7 +37,7 @@ class Picks {
         c2.name_choice AS choice2_name,
         c1.photo_choice AS photo1_name,
         c2.photo_choice AS photo2_name,
-        p.likes,
+        COALESCE(p.likes::integer, 0) AS likes,
         p.status,
         p.created_at AS datePicked,
         c1.selected AS selectd1,
@@ -107,6 +108,21 @@ JOIN
       let results = await db.query(newLocal, [id_pick,id_pick]).catch(console.log); 
       return results ;
   }
+
+  
+  async updateLikesPicks(id_pick) {
+    let response
+    try {
+        const query = 'UPDATE mypick.picks  SET likes = likes + 1 where id_pick =$1';
+        const values = [id_pick];
+        const result_insert = await db.query(query, values);           
+        response = result_insert
+   
+ } catch (err) { 
+    response = err;
+   }  
+   return response
+}
 
               
 }

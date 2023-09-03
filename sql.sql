@@ -55,11 +55,28 @@ CREATE TABLE mypick.picks (
 	status varchar(10) NULL,
 	id_user int4 NULL,
 	created_at timestamptz NOT NULL DEFAULT now(),
+    update_at timestamptz NOT NULL DEFAULT now(),
 	picks int4 NULL,
 	CONSTRAINT picks_pkey PRIMARY KEY (id_pick)
 );
 -- mypick.users definition
+  
+  -- Crear la función de trigger
+CREATE OR REPLACE FUNCTION update_picks_update_at()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.update_at = now();
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
 
+-- Crear el trigger
+CREATE TRIGGER update_picks_trigger
+BEFORE UPDATE ON mypick.picks
+FOR EACH ROW
+EXECUTE FUNCTION update_picks_update_at();
 -- .
 Drop table
 

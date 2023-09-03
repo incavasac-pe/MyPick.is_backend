@@ -11,7 +11,31 @@ class Bookmarks {
         return results ;
     }
     async getBookmarksByUser (id_user) {       
-        let results = await db.query('SELECT * FROM mypick.bookmarks WHERE id_user = $1', [id_user]).catch(console.log); 
+        let results = await db.query(`SELECT
+        p.id_pick AS id,
+        c.name AS category,
+        c.status,
+        p.picks AS pick_ranking,
+        c1.name_choice AS choice1_name,
+        c2.name_choice AS choice2_name,
+        c1.photo_choice AS photo1_name,
+        c2.photo_choice AS photo2_name,
+        COALESCE(p.likes::integer, 0) AS likes,
+        p.status,
+        p.created_at AS datePicked,
+        c1.selected AS selected1,
+        c2.selected AS selected2
+    FROM
+        mypick.picks p
+        JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
+        JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
+        JOIN mypick.category c ON p.id_category::integer = c.id
+        JOIN mypick.users u ON p.id_user::integer = u.id
+    WHERE
+        p.id_pick IN (
+            SELECT id_pick FROM mypick.bookmarks  where id_user =$1
+        );
+        `, [id_user]).catch(console.log); 
         return results ;
     }
 
