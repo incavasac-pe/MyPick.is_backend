@@ -22,12 +22,14 @@ const categoryRoutes = require('./src/routers/category');
 const upload = require('./src/routers/upload');
 const picks = require('./src/routers/picks');
 const bookmarks = require('./src/routers/bookmarks');
+const trendingTopics = require('./src/routers/trendingTopics');
 
 app.use(userRoutes); 
 app.use(categoryRoutes); 
 app.use(upload); 
 app.use(picks);
 app.use(bookmarks);
+app.use(trendingTopics);
 
   app.listen(PORT, () => {
     console.log(`App running on port ${PORT}.`)

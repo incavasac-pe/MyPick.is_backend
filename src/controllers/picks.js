@@ -21,7 +21,7 @@ class Picks {
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
       JOIN mypick.category c ON p.id_category::integer = c.id 
-      ORDER BY p.update_at desc 
+      ORDER BY p.update_at asc 
       LIMIT ${limit}` ).catch(console.log); 
         return results ;
     }
@@ -40,8 +40,8 @@ class Picks {
         COALESCE(p.likes::integer, 0) AS likes,
         p.status,
         p.created_at AS datePicked,
-        c1.selected AS selectd1,
-        c2.selected AS selectd2
+        COALESCE(c1.selected ::integer, 0) AS selectd1,
+        COALESCE(c2.selected ::integer, 0) AS selectd2  
       FROM mypick.picks p
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice

@@ -22,9 +22,9 @@ class Bookmarks {
         c2.photo_choice AS photo2_name,
         COALESCE(p.likes::integer, 0) AS likes,
         p.status,
-        p.created_at AS datePicked,
-        c1.selected AS selected1,
-        c2.selected AS selected2
+        p.created_at AS datePicked, 
+        COALESCE(c1.selected ::integer, 0) AS selectd1,
+        COALESCE(c2.selected ::integer, 0) AS selectd2
     FROM
         mypick.picks p
         JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice

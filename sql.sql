@@ -108,3 +108,19 @@ CREATE TABLE mypick.bookmarks (
 	id_user int4 NULL,
 	CONSTRAINT bookmarks_pkey PRIMARY KEY (id_bookmarks)
 );
+
+
+
+CREATE TABLE Comentario (
+  id SERIAL PRIMARY KEY,
+  id_pick INTEGER,
+    id_user INTEGER,
+  contenido TEXT 
+);
+
+CREATE TABLE Reply (
+  id SERIAL PRIMARY KEY,
+  comentario_id INTEGER,
+  contenido TEXT,
+  FOREIGN KEY (comentario_id) REFERENCES Comentario(id)
+);
