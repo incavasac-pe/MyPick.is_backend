@@ -27,8 +27,8 @@ router.get('/list_trendingTopics_category', async (req, res) => {
     let status = 400; 
     response.error = true; 
     const id_category = req.query.id_category;
-
  
+    if (id_category!=undefined ) { 
     exist = await new TrendingTopics().getTrendingTopicsId(id_category);
     
     if (exist.rowCount === 0) {              
@@ -39,7 +39,7 @@ router.get('/list_trendingTopics_category', async (req, res) => {
         response.data =  exist.rows
         status = 200;        
     }
-    
+}
     res.status(status).json(response)
 });
    

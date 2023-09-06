@@ -37,7 +37,7 @@ router.get('/my_bookmarks', async (req, res) => {
     } 
     const id_user = result_user.rows[0].id  
  
-    exist = await new Bookmarks().getBookmarksByUser (id_user);
+    exist = await new Bookmarks().getBookmarksByUser(id_user);
     
     if (exist.rowCount === 0) {              
         response.msg = `Bookmarks empty`;        
@@ -78,7 +78,7 @@ router.get('/my_bookmarks', async (req, res) => {
         let result_insert = await new Bookmarks().createBookmarks (id_pick, id_user );
       
         if (! result_insert ?. rowCount || result_insert ?. rowCount == 0) {           
-            response.msg = `An error occurred while trying to create a category`;
+            response.msg = `An error occurred while trying to create a Bookmarks `;
             status = 500;            
         } else { 
             response.error = false;

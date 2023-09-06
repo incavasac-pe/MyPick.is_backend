@@ -138,14 +138,19 @@ router.post('/register_picks', async (req, res) => {
     let status = 400;
     response.error = true;
     
-    const { id_pick, id_choice } = req.body;   
+    const { id_pick, id_choice,email } = req.body;   
     
 
     if (id_pick === '' || id_choice === '') {
       response.msg = 'empty data';
       return res.status(status).json(response);
     }
-    
+    let id_user = 99999; 
+    const result_user = await new Auth().getUserByEmail(email);
+    if (result_user.rowCount>0) {  
+      id_user = result_user.rows[0].id
+    } 
+
     const pick_update = await new Picks().updateRankinkPicks(id_pick);  
     
     if (!pick_update?.rowCount || pick_update.rowCount === 0) {
@@ -159,6 +164,7 @@ router.post('/register_picks', async (req, res) => {
       status = 500;
       return res.status(status).json(response);
     }
+    await new Picks().createVoto(id_pick,id_choice,id_user ) 
     const picks_percente = await new Picks().getPicksPorcentage(id_pick);
      
     response.error = false;
@@ -193,6 +199,36 @@ router.post('/register_picks', async (req, res) => {
     
     res.status(status).json(response);
   });
+
+  
+router.get('/my_pick_vote', async (req, res) => {
+  const response = newResponseJson();
+  let status = 400; 
+  response.error = true; 
+  const email = req.query.email;
+
+  const result_user = await new Auth().getUserByEmail(email);
+  if (result_user.rowCount == 0) {  
+      response.msg = `User does not exist`;  
+      return res.status(status).json(response);   
+  } 
+  const id_user = result_user.rows[0].id  
+
+  exist = await new Picks().getMyPickerVote (id_user);
+  
+  if (exist.rowCount === 0) {              
+      response.msg = `My picks vote empty`;        
+  }else  {      
+      response.error = false;
+      response.msg = `List My picks vote `; 
+      response.data =  exist.rows
+      status = 200;        
+  }
+  
+  res.status(status).json(response)
+});
+
+
 function newResponseJson() {
     return {error: true, msg: "", data: []};
 }
