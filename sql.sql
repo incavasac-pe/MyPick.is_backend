@@ -126,12 +126,23 @@ CREATE TRIGGER update_bookmark_trigger
 BEFORE UPDATE ON mypick.bookmarks
 FOR EACH ROW
 EXECUTE FUNCTION update_bookmark_update_at();
- CREATE TABLE mypick.vote_pick (
+
+-- DROP TABLE mypick.vote_pick;
+
+CREATE TABLE mypick.vote_pick (
 	id serial NOT NULL,
-	id_pick  integer, 
-	id_choice  integer, 
-	id_user int4 NULL
+	id_pick int4 NULL,
+	id_choice int4 NULL,
+	id_user int4 NULL,
+	update_at timestamptz(0) NOT NULL
 );
+
+solo un registro por id_user id_pick
+
+
+-- Agregar restricción UNIQUE compuesta
+ALTER TABLE mypick.vote_pick
+ADD CONSTRAINT uc_vote_pick_user_pick UNIQUE (id_user, id_pick);
 
 
 CREATE TABLE mypick.comentario (
