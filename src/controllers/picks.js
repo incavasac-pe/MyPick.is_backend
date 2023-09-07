@@ -21,7 +21,7 @@ class Picks {
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
       JOIN mypick.category c ON p.id_category::integer = c.id 
-      ORDER BY p.update_at desc 
+      ORDER BY p.update_at asc 
       LIMIT ${limit}` ).catch(console.log); 
         return results ;
     }
@@ -40,8 +40,9 @@ class Picks {
         COALESCE(p.likes::integer, 0) AS likes,
         p.status,
         p.created_at AS datePicked,
-        c1.selected AS selectd1,
-        c2.selected AS selectd2
+        mypick.calcular_diferencia_( p.created_at::timestamp) as dias,
+        COALESCE(c1.selected ::integer, 0) AS selectd1,
+        COALESCE(c2.selected ::integer, 0) AS selectd2  
       FROM mypick.picks p
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
@@ -69,7 +70,7 @@ class Picks {
     async updateRankinkPicks(id_pick) {
       let response
       try {
-          const query = 'UPDATE mypick.picks   SET picks = picks + 1 where id_pick =$1';
+          const query = 'UPDATE mypick.picks  SET picks = picks + 1 where id_pick =$1';
           const values = [id_pick];
           const result_insert = await db.query(query, values);           
           response = result_insert
@@ -123,8 +124,47 @@ JOIN
    }  
    return response
 }
-
-              
+async createVoto(id_pick,id_choice,id_user ) {
+  let response
+  try {
+      const query = 'INSERT INTO mypick.vote_pick (id_pick, id_choice, id_user,update_at) VALUES ($1, $2, $3,now()) RETURNING id';
+      const values = [id_pick,id_choice,id_user];
+      const result_insert = await db.query(query, values);           
+      response = result_insert
+ 
+} catch (err) { 
+  response = err;
+ }  
+ return response
+} 
+async getMyPickerVote (id_user) {       
+  let results = await db.query(`
+             SELECT   
+                p.id_pick AS id,
+                c.name AS category,
+                c.status,
+                p.picks AS pick_ranking,
+                c1.name_choice AS choice1_name,
+                c2.name_choice AS choice2_name,
+                c1.photo_choice AS photo1_name,
+                c2.photo_choice AS photo2_name,
+                COALESCE(p.likes::integer, 0) AS likes,
+                p.status,
+                vp.update_at AS datePicked, 
+                mypick.calcular_diferencia_( vp.update_at::timestamp) as dias,
+                COALESCE(c1.selected ::integer, 0) AS selectd1,
+                COALESCE(c2.selected ::integer, 0) AS selectd2
+            FROM
+                mypick.picks p
+                JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
+                JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
+                JOIN mypick.category c ON p.id_category::integer = c.id
+                JOIN mypick.users u ON p.id_user::integer = u.id
+                JOIN mypick.vote_pick vp   ON vp.id_pick =p.id_pick        
+                where vp.id_user = $1 
+  `, [id_user]).catch(console.log); 
+  return results ;
+}          
 }
 
 module.exports = Picks;

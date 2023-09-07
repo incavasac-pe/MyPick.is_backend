@@ -108,3 +108,63 @@ CREATE TABLE mypick.bookmarks (
 	id_user int4 NULL,
 	CONSTRAINT bookmarks_pkey PRIMARY KEY (id_bookmarks)
 );
+
+
+  -- Crear la función de trigger
+CREATE OR REPLACE FUNCTION update_bookmark_update_at()
+    RETURNS TRIGGER AS
+$$
+BEGIN
+    NEW.update_at = now();
+    RETURN NEW;
+END;
+$$
+LANGUAGE plpgsql;
+
+-- Crear el trigger
+CREATE TRIGGER update_bookmark_trigger
+BEFORE UPDATE ON mypick.bookmarks
+FOR EACH ROW
+EXECUTE FUNCTION update_bookmark_update_at();
+ CREATE TABLE mypick.vote_pick (
+	id serial NOT NULL,
+	id_pick  integer, 
+	id_choice  integer, 
+	id_user int4 NULL
+);
+
+
+CREATE TABLE mypick.comentario (
+  id SERIAL PRIMARY KEY,
+  id_pick INTEGER,
+ id_user INTEGER,
+  contenido TEXT ,
+  username text,
+  created_at timestamptz NOT NULL DEFAULT now() 
+);
+
+CREATE TABLE mypick.reply (
+  id SERIAL PRIMARY KEY,
+  comentario_id INTEGER,
+  contenido TEXT,
+   username text,
+  created_at timestamptz NOT NULL DEFAULT now(), 
+  FOREIGN KEY (comentario_id) REFERENCES Comentario(id)
+);
+
+
+CREATE OR REPLACE FUNCTION mypick.calcular_diferencia_(fecha2 timestamp without time zone, OUT dias integer, OUT horas integer, OUT minutos integer)
+ RETURNS record
+ LANGUAGE plpgsql
+AS $function$
+DECLARE
+    fecha1 timestamp := now();
+    diff_interval interval;
+BEGIN
+    diff_interval := fecha1- fecha2;
+    dias := EXTRACT(DAY FROM diff_interval);
+    horas := EXTRACT(HOUR FROM diff_interval);
+    minutos := EXTRACT(MINUTE FROM diff_interval);
+END;
+$function$
+;
