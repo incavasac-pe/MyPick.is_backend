@@ -5,32 +5,35 @@ class Comments {
     async  getCommentsWithReplies(id_pick) {
         let response;
         try {
-          const query = `
-          SELECT
-          c.id AS id,
-          c.username AS usuario,
-          c.contenido AS contenido,
-          to_char(c.created_at, 'DD MON YYYY') AS fecha,
-          COALESCE(
-            json_agg(
-              json_build_object(
-                'id', r.id,
-                'usuario', r.username,
-                'contenido', r.contenido,
-                'fecha', to_char(r.created_at, 'DD MON YYYY')
-              )
-            ) FILTER (WHERE r.id IS NOT NULL),
-            '[]'
-          ) AS respuestas
-        FROM
-          mypick.comentario c
-          LEFT JOIN mypick.reply r ON c.id = r.comentario_id
-          where c.id_pick = 4
-        GROUP BY
-          c.id, c.username, c.contenido, c.created_at
-        ORDER BY
-          c.id;
-          `;
+          const query = ` 
+         SELECT
+         c.id AS id,
+         c.username AS usuario,
+         c.contenido AS contenido,
+         u.photo AS foto,
+         to_char(c.created_at, 'DD MON YYYY') AS fecha,
+         COALESCE(
+           json_agg(
+             json_build_object(
+               'id', r.id,
+               'usuario', r.username,
+               'foto', r.foto,
+               'contenido', r.contenido,
+               'fecha', to_char(r.created_at, 'DD MON YYYY')
+             )
+           ) FILTER (WHERE r.id IS NOT NULL),
+           '[]'
+         ) AS respuestas
+       FROM
+         mypick.comentario c
+         LEFT JOIN mypick.reply r ON c.id = r.comentario_id
+         JOIN mypick.users u ON c.username = u.username
+       WHERE
+         c.id_pick = ${id_pick}
+       GROUP BY
+         c.id, c.username, c.contenido, c.created_at,u.photo
+       ORDER BY
+         c.id;  `;
           const result = await db.query(query);
           response = result
         } catch (err) {
@@ -52,11 +55,11 @@ class Comments {
         return response;
       }
 
-      async  createReply(comentario_id, contenido,username) {
+      async  createReply(comentario_id, contenido,username,foto) {
         let response;
         try {
-          const query = 'INSERT INTO  mypick.reply (comentario_id, contenido, username, created_at) VALUES ($1, $2,$3,now()) RETURNING id';
-          const values = [comentario_id, contenido,username];
+          const query = 'INSERT INTO  mypick.reply (comentario_id, contenido, username,foto, created_at) VALUES ($1, $2,$3 ,$4,now()) RETURNING id';
+          const values = [comentario_id, contenido,username,foto];
           const result_insert = await db.query(query, values);
           response = result_insert;
         } catch (err) {

@@ -29,10 +29,10 @@ router.get('/list_comments_bypicks', async (req, res) => {
     let status = 400;
     let bandera = false;
     response.error = true;
-    const { id_pick, contenido,email} = req.body;
+    const { id_pick, contenido, email} = req.body;
  
 
-    if (contenido.trim() == "") {
+    if (contenido.trim == "") {
         bandera = true;        
         response.msg = 'empty data';      
     }
@@ -51,9 +51,10 @@ router.get('/list_comments_bypicks', async (req, res) => {
             response.msg = `An error occurred while trying to create a Comments`;
             status = 500;            
         } else { 
+            exist = await new Comments().getCommentsWithReplies(id_pick);
             response.error = false;
             response.msg = `Comments is created successfully`; 
-            response.data =  result_insert.rows[0].id
+            response.data = exist.rows
             status = 201;
         }
     }
@@ -67,7 +68,7 @@ router.post('/register_reply', async (req, res) => {
     let status = 400;
     let bandera = false;
     response.error = true;
-    const { comentario_id, contenido,email} = req.body;
+    const { id_pick,comentario_id, contenido,email} = req.body;
      
     if (contenido.trim() == "") {
         bandera = true;        
@@ -79,16 +80,18 @@ router.post('/register_reply', async (req, res) => {
         bandera = true;     
     }  
     if (!bandera) {    
-        const username = exist.rows[0].username;    
-        let result_insert = await new Comments().createReply(comentario_id, contenido,username);
+        const username = exist.rows[0].username;   
+        const photo = exist.rows[0].photo;  
+        let result_insert = await new Comments().createReply(comentario_id, contenido,username,photo);
       
         if (! result_insert ?. rowCount || result_insert ?. rowCount == 0) {           
             response.msg = `An error occurred while trying to create a Reply`;
             status = 500;            
         } else { 
+            exist = await new Comments().getCommentsWithReplies(id_pick);
             response.error = false;
             response.msg = `Reply is created successfully`; 
-            response.data =  result_insert.rows[0].id
+            response.data = exist.rows
             status = 201;
         }
     }
