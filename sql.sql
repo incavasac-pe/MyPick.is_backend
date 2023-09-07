@@ -134,19 +134,24 @@ EXECUTE FUNCTION update_bookmark_update_at();
 );
 
 
-CREATE TABLE Comentario (
+CREATE TABLE mypick.comentario (
   id SERIAL PRIMARY KEY,
   id_pick INTEGER,
-    id_user INTEGER,
-  contenido TEXT 
+ id_user INTEGER,
+  contenido TEXT ,
+  username text,
+  created_at timestamptz NOT NULL DEFAULT now() 
 );
 
-CREATE TABLE Reply (
+CREATE TABLE mypick.reply (
   id SERIAL PRIMARY KEY,
   comentario_id INTEGER,
   contenido TEXT,
+   username text,
+  created_at timestamptz NOT NULL DEFAULT now(), 
   FOREIGN KEY (comentario_id) REFERENCES Comentario(id)
 );
+
 
 CREATE OR REPLACE FUNCTION mypick.calcular_diferencia_(fecha2 timestamp without time zone, OUT dias integer, OUT horas integer, OUT minutos integer)
  RETURNS record

@@ -92,9 +92,7 @@ WHERE
      WHERE
         t.rn = 1 and t.id_category::integer = $1 LIMIT 3`, [id_category]).catch(console.log); 
         return results ;
-    } 
- 
-
+    }  
               
 }
 
