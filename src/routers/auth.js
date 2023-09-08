@@ -12,42 +12,44 @@ require('dotenv').config();
     let status = 400;
     let bandera = false;
     response.error = true;
-    const { full_name, email, password } = req.body;
+    const { full_name, email, password,origin } = req.body;
     const saltRounds = 10;
     const salt = await bcrypt.genSalt(saltRounds);
       // Realiza el hash de la contraseña con el salt
       const hashedPassword = await bcrypt.hash(password, salt);
 
-    if (full_name.trim() == "" || email.trim() == '' || password.trim() == '') {
+    if (full_name.trim() == "" || email.trim() == '' ) {
         bandera = true;        
         response.msg = 'empty data';      
     }
     exist = await new Auth().getUserByEmail(email);
     if (exist.rowCount > 0) {
+        status=401
         bandera = true;       
         response.msg = `The email is already registered`;        
     }
     if (! bandera) {
         const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
         const username = full_name.substring(0, 8)
-        let usuarios = await new Auth().createUser(full_name, email, hashedPassword,token,username);
+        let usuarios = await new Auth().createUser(full_name, email, hashedPassword,token,username,origin);
 
         if (! usuarios ?. rowCount || usuarios ?. rowCount == 0) {           
             response.msg = `An error occurred while trying to create a user`;
             status = 500;
             
         } else {
-           
+           if(origin =='mipick'){
             //enviar correo con el token  de validacion de cuenta
              // Ejemplo de envío de correo
-           console.log("se procede con el envio de correo")
-           emailSender.sendEmail(email, 'Activation email', '',token,1)
-           .then(response => {
-                   console.log('Correo enviado:', response);
-           })
-           .catch(error => {
-               console.log('Error al enviar el correo:', error);
-           }); 
+                    console.log("se procede con el envio de correo")
+                    emailSender.sendEmail(email, 'Activation email', '',token,1)
+                    .then(response => {
+                            console.log('Correo enviado:', response);
+                    })
+                    .catch(error => {
+                        console.log('Error al enviar el correo:', error);
+                    });
+                    }
             response.error = false;
             response.msg = `Successful registration`; 
             response.data =  token

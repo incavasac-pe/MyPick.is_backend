@@ -93,7 +93,7 @@ CREATE TABLE mypick.users (
 	CONSTRAINT users_email_key UNIQUE (email),
 	CONSTRAINT users_pkey PRIMARY KEY (id)
 );
-
+ALTER TABLE mypick.users ADD origin varchar(50) NULL;
 
 -- mypick.bookmarks definition
 

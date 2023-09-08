@@ -10,11 +10,13 @@ class Auth {
         let results = await db.query('SELECT * FROM mypick.users WHERE token = $1', [token]).catch(console.log); 
         return results ;
     }
-    async createUser(full_name, email, password,token,username) {
+    async createUser(full_name, email, password,token,username,origin) {
         let response
         try {
-            const query = 'INSERT INTO mypick.users (full_name, email, password,status,token,username) VALUES ($1, $2, $3,$4,$5,$6) RETURNING id';
-            const values = [full_name, email, password,'P',token,username];
+            const status = origin =='mipick' ? 'P':'A';
+
+            const query = 'INSERT INTO mypick.users (full_name, email, password,status,token,username,origin) VALUES ($1, $2, $3,$4,$5,$6,$7) RETURNING id';
+            const values = [full_name, email, password,status,token,username,origin];
             const result_insert = await db.query(query, values);           
             response = result_insert
        
