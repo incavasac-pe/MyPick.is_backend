@@ -21,7 +21,8 @@ const routes = [
   require('./src/routers/picks'),
   require('./src/routers/bookmarks'),
   require('./src/routers/trendingTopics'),
-  require('./src/routers/comments')
+  require('./src/routers/comments'),  
+  require('./src/routers/scraping'),   
 ];
 
 for (const route of routes) {
