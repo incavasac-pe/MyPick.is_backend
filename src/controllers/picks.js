@@ -21,7 +21,7 @@ class Picks {
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
       JOIN mypick.category c ON p.id_category::integer = c.id 
-      ORDER BY p.update_at asc 
+      ORDER BY p.update_at desc 
       LIMIT ${limit}` ).catch(console.log); 
         return results ;
     }
@@ -56,8 +56,8 @@ class Picks {
     async createPicks(id_category, id_choice1, id_choice2,id_user) {
         let response
         try {
-            const query = 'INSERT INTO mypick.picks (id_category, id_choice1, id_choice2,id_user) VALUES ($1, $2, $3, $4) RETURNING id_pick';
-            const values = [id_category, id_choice1, id_choice2 ,id_user];
+            const query = 'INSERT INTO mypick.picks (id_category, id_choice1, id_choice2,id_user,likes,picks) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_pick';
+            const values = [id_category, id_choice1, id_choice2 ,id_user,'0','0'];
             const result_insert = await db.query(query, values);           
             response = result_insert
        

@@ -68,7 +68,8 @@ router.post('/register_picks', async (req, res) => {
     
     const { email,id_category, name_choice1, name_choice2  } = req.body;   
   
-    let EDFile1 = req.files.photo1; 
+    let EDFile1 = req.files.photo1;  
+    
     EDFile1.mv(`${_dirname}/${EDFile1.name}`,err => { 
         if(err){ return res.status(500).send({ message : err })}       
     })
