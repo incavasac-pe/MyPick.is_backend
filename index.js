@@ -23,6 +23,7 @@ const routes = [
   require('./src/routers/trendingTopics'),
   require('./src/routers/comments'),  
   require('./src/routers/scraping'),   
+  require('./src/routers/contact'),   
 ];
 
 for (const route of routes) {
