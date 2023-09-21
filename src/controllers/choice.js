@@ -15,7 +15,7 @@ class Choice {
     async createChoices(name_choice,photo ) {
         let response
         try {
-            const query = 'INSERT INTO mypick.choice (name_choice, photo_choice,selectd) VALUES ($1, $2, $3) RETURNING id_choice';
+            const query = 'INSERT INTO mypick.choice (name_choice, photo_choice,selected) VALUES ($1, $2, $3) RETURNING id_choice';
             const values = [name_choice,photo,'0'];
             const result_insert = await db.query(query, values);           
             response = result_insert
