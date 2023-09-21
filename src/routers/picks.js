@@ -99,7 +99,7 @@ router.post('/register_picks', async (req, res) => {
    
     let result_insert_choice1 = await new Choice().createChoices(name_choice1, EDFile1.name);
     let result_insert_choice2 = await new Choice().createChoices(name_choice2, EDFile2.name);
-
+ 
     if (!result_insert_choice1?.rowCount || result_insert_choice1?.rowCount === 0) {
       response.msg = 'An error occurred while trying to create choice_1';
       status = 500;
@@ -125,7 +125,8 @@ router.post('/register_picks', async (req, res) => {
       status = 500;
       return res.status(status).json(response);
     }
-    
+    await new Picks().createPicksComen(result_insert_pick.rows[0].id_pick, result_user.rows[0].id);
+
     response.error = false;
     response.msg = 'Category created successfully';
     response.data = result_insert_pick.rows[0].id_pick;

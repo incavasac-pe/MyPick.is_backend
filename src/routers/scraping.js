@@ -1,53 +1,54 @@
 const express = require("express");
- 
 const router = express.Router();
-const puppeteer = require('puppeteer');
+ const { newResponseJson } = require('../responseUtils');
+const axios = require('axios');  
 
-router.get("/scrapping", async function (req, res) {
-	const browser = await puppeteer.launch();
-  const page = await browser.newPage();
-
-  // Navigate the page to a URL
-  await page.goto('https://developer.chrome.com/');
-
-  // Set screen size
-  await page.setViewport({width: 1080, height: 1024});
-
-  // Type into search box
-  await page.type('.search-box__input', 'automate beyond recorder');
-
-  // Wait and click on first result
-  const searchResultSelector = '.search-box__link';
-  await page.waitForSelector(searchResultSelector);
-  await page.click(searchResultSelector);
-
-  // Locate the full title with a unique string
-  const textSelector = await page.waitForSelector(
-    'text/Customize and automate'
-  );
-  const fullTitle = await textSelector?.evaluate(el => el.textContent);
-
-  // Print the full title
-  console.log('The title of this blog post is "%s".', fullTitle);
-
-  await browser.close();
-})
-router.get('/list_products', async (req, res) => {
-  // Configuración de Puppeteer
- 
+router.get('/list_products_api_externa', async (req, res) => {
+  const response = newResponseJson();
+  let status = 400; 
+  response.error = true; 
+  const search = req.query.search;
   
+  let data = JSON.stringify({
+    query: `query MyQuery {
+    amazonProductSearchResults(input: {searchTerm: "${search}", domain: US}) {
+      productResults(input: {}) {
+        results {
+          imageUrls
+          price {
+            value
+          }
+          title
+        }
+      }
+    }
+  }`,
+    variables: {}
+  }); 
+  
+  let config = {
+    method: 'POST',
+    maxBodyLength: Infinity,
+    url: 'https://graphql.canopyapi.co',
+    headers: { 
+      'Content-Type': 'application/json', 
+      'API-KEY': 'abe684f2-c3ac-4099-bbbf-d3a1fe264336'
+    },
+    data : data
+  };
 
-         //launch browser in headless mode
-   const browser = await pt.launch()
-   //browser new page
-   const page = await browser.newPage()
-   //launch URL
-   await page.goto('https://www.amazon.com/s?k=Adidas+racer+tr21')
-   //identify element
-   const f = await page.$("[class='a-offscreen']")
-   //obtain text
-   const text = await (await f.getProperty('textContent')).jsonValue() 
-   
-   console.log("El precio del productos es is: " + text)
+    axios.request(config)
+    .then((response1) => {
+      status = 200 
+      const resp = response1.data?.data 
+      response.data = resp.amazonProductSearchResults?.productResults?.results
+      res.status(status).json(response)
+    
+    })
+    .catch((error) => {
+      console.log(error);
+      res.status(status).json(response)
+    });
+          
 });
-module.exports = router;
+module.exports = router; 

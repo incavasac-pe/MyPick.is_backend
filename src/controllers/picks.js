@@ -67,6 +67,19 @@ class Picks {
        return response
     }
 
+    async createPicksComen(id_pick) {
+      let response
+      try {
+          const query = ' INSERT INTO mypick.comentario  (id_pick, id_user, contenido, username, created_at)  VALUES ($1, $2, $3, $4, now()) RETURNING id';
+          const values = [id_pick, '99999999', '' ,''];
+          const result_insert = await db.query(query, values);           
+          response = result_insert
+     
+   } catch (err) { 
+      response = err;
+     }  
+     return response
+  }
     async updateRankinkPicks(id_pick) {
       let response
       try {
