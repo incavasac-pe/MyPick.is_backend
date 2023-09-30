@@ -27,7 +27,7 @@ class Comments {
        FROM
          mypick.comentario c
          LEFT JOIN mypick.reply r ON c.id = r.comentario_id
-         JOIN mypick.users u ON c.username = u.username
+       LEFT JOIN mypick.users u ON c.username = u.username
        WHERE
          c.id_pick = ${id_pick}
        GROUP BY

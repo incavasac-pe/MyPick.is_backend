@@ -9,8 +9,7 @@ router.get('/list_comments_bypicks', async (req, res) => {
     response.error = true; 
     const id_pick = req.query.id_pick;
  
-    exist = await new Comments().getCommentsWithReplies(id_pick);
-    
+    exist = await new Comments().getCommentsWithReplies(id_pick); 
     if (exist.rowCount === 0) {              
         response.msg = `Comments empty`;        
     }else  { 
@@ -29,8 +28,7 @@ router.get('/list_comments_bypicks', async (req, res) => {
     let status = 400;
     let bandera = false;
     response.error = true;
-    const { id_pick, contenido, email} = req.body;
- 
+    const { id_pick, contenido, email} = req.body; 
 
     if (contenido.trim == "") {
         bandera = true;        

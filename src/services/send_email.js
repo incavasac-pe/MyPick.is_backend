@@ -3,25 +3,26 @@ require('dotenv').config();
 
 class EmailSender {
   constructor() {
-    this.transporter = nodemailer.createTransport({
-      host: process.env.EMAIL_HOST,
-      port: 587,
-      secure: false,  
-      requireTLS: true,
-      auth: {
-        user: process.env.EMAIL_ADDRESS,
-        pass: process.env.EMAIL_PASSWORD
-      }
-    });
-  } 
+  
+      this.transporter = nodemailer.createTransport({
+        host: process.env.EMAIL_HOST,
+        port: 587,
+        secure: false, // true si usas SSL/TLS,
+        requireTLS: true,
+        auth: {
+          user: process.env.EMAIL_ADDRESS,
+          pass: process.env.EMAIL_PASSWORD
+        }
+      });
+    }
   sendEmail(to, subject, contenct) {        
-      
-      const mailOptions = {
+    const mailOptions = {
       from: process.env.EMAIL_ADDRESS,
       to: to,
       subject: subject, 
       html: contenct,
       };
+
 
     return new Promise((resolve, reject) => {
       this.transporter.sendMail(mailOptions, (error, info) => {
