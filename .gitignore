@@ -3,3 +3,4 @@ node_modules
 .vscode
 src/config/db.js
 package.json
+public

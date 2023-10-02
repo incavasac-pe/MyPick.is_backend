@@ -1,14 +1,15 @@
  const db = require('../config/db')
 
 class Category {
-   
-
-     
-    async getCategoryAll() {       
-        let results = await db.query('SELECT * FROM mypick.category WHERE status = $1', ['A']).catch(console.log); 
+ 
+    async getCategoryAll(limit) {       
+        let results = await db.query('SELECT * FROM mypick.category WHERE status = $1 LIMIT $2', ['A',limit]).catch(console.log); 
         return results ;
     }
-
+    async getCategoryid(id) {       
+        let results = await db.query('SELECT * FROM mypick.category WHERE id = $1', [id]).catch(console.log); 
+        return results ;
+    }
     async getCategory(category) {       
         let results = await db.query('SELECT * FROM mypick.category WHERE name = $1', [category]).catch(console.log); 
         return results ;
