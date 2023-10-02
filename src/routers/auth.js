@@ -4,8 +4,16 @@ const jwt = require('jsonwebtoken');
 const router = express.Router();
 const Auth = require('../controllers/auth');
 const EmailSender = new require('../services/send_email')
-const emailSender = new EmailSender();
+ 
+
 require('dotenv').config();
+
+const clientId = process.env.EMAIL_CLIENTID;
+const clientSecret = process.env.EMAIL_CLIENTSECRET;
+const refreshToken = process.env.EMAIL_REFRESHTOKEN;
+const email_from =    process.env.USER_EMAIL;
+
+const base_url = process.env.BASE_URL;
   
  router.post('/register', async (req, res) => {
     const response = newResponseJson();
@@ -39,17 +47,42 @@ require('dotenv').config();
             
         } else {
            if(origin =='mipick'){
-            //enviar correo con el token  de validacion de cuenta
-             // Ejemplo de envío de correo
-                    console.log("se procede con el envio de correo")
-                    emailSender.sendEmail(email, 'Activation email', '',token,1)
-                    .then(response => {
-                            console.log('Correo enviado:', response);
-                    })
-                    .catch(error => {
-                        console.log('Error al enviar el correo:', error);
-                    });
-                    }
+            //enviar correo con el token  de validacion de cuenta 
+                const emailSender = new EmailSender(clientId, clientSecret, refreshToken, email_from);
+             
+               const content = `<!DOCTYPE html>
+                <html>
+                <head>
+                    <meta name="viewport" content="width=device-width">
+                    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">     
+                </head>
+                <body>
+                <h1>Welcome to MyPick!</h1>
+                <p>Please activate your account by clicking on the following link:</p>
+                <a href="http://localhost:3000/activate?token=${token}">Activate account here</a>
+                </body>
+                </html>` 
+
+ 
+                const emailOptions = {
+                    from: process.env.USER_EMAIL,
+                    to: email,
+                    subject: "Activation email",
+                    html: content
+                };
+        
+                emailSender.sendEmail(emailOptions)
+                .then(() => {
+                    console.log("Email sent successfully");   
+                })
+                .catch((error) => {
+                    console.error("Failed to send email:", error); 
+                }); 
+                                    
+
+            }
+
+
             response.error = false;
             response.msg = `Successful registration`; 
             response.data =  token
@@ -145,14 +178,38 @@ router.post('/link_password', async (req, res) => {
        const user = result.rows[0];
         const token = jwt.sign({ email: user.email ,full_name:user.full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
         //ENVIAR CORREO EL LINK CON EL TOKEN        
-            console.log("se procede con el envio de correo")
-            emailSender.sendEmail(email, 'Reset password', '',token,2)
-            .then(response => {
-                    console.log('Correo enviado:', response);
-            })
-            .catch(error => {
-                console.log('Error al enviar el correo:', error);
-            }); 
+        
+            const emailSender = new EmailSender(clientId, clientSecret, refreshToken, email_from);
+             
+            const content = `<!DOCTYPE html>
+            <html>
+            <head>
+                <meta name="viewport" content="width=device-width">
+                <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">     
+            </head>
+            <body>
+            <h1>Reset to MyPick!</h1>
+            <p>Please reset your password by clicking on the following link:</p>
+            <a href="${base_url}/resetPassword?token=${token}">Reset password here</a>
+            </body>
+            </html>`;
+
+
+             const emailOptions = {
+                 from: process.env.USER_EMAIL,
+                 to: email,
+                 subject: "Reset password",
+                 html: content
+             };
+     
+             emailSender.sendEmail(emailOptions)
+             .then(() => {
+                 console.log("Email sent successfully");   
+             })
+             .catch((error) => {
+                 console.error("Failed to send email:", error); 
+             }); 
+
         response.error = false;
         response.msg = `Send email link reset password`; 
         response.data = token

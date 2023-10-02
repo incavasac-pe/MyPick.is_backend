@@ -1,38 +1,56 @@
-const nodemailer = require('nodemailer');
-require('dotenv').config();
+const { google } = require("googleapis");
+const OAuth2 = google.auth.OAuth2;
+const nodemailer = require("nodemailer");
 
 class EmailSender {
-  constructor() {
-  
-      this.transporter = nodemailer.createTransport({
-        host: process.env.EMAIL_HOST,
-        port: 587,
-        secure: false, // true si usas SSL/TLS,
-        requireTLS: true,
-        auth: {
-          user: process.env.EMAIL_ADDRESS,
-          pass: process.env.EMAIL_PASSWORD
-        }
-      });
-    }
-  sendEmail(to, subject, contenct) {        
-    const mailOptions = {
-      from: process.env.EMAIL_ADDRESS,
-      to: to,
-      subject: subject, 
-      html: contenct,
-      };
+  constructor(clientId, clientSecret, refreshToken, email) {
+    this.clientId = clientId;
+    this.clientSecret = clientSecret;
+    this.refreshToken = refreshToken;
+    this.email = email;
+    this.transporter = null;
+  }
 
+  async createTransporter() {
+    const oauth2Client = new OAuth2(
+      this.clientId,
+      this.clientSecret,
+      "https://developers.google.com/oauthplayground"
+    );
 
-    return new Promise((resolve, reject) => {
-      this.transporter.sendMail(mailOptions, (error, info) => {
-        if (error) {
-          reject(error);
-        } else {
-          resolve(info.response);
+    oauth2Client.setCredentials({
+      refresh_token: this.refreshToken
+    });
+
+    const accessToken = await new Promise((resolve, reject) => {
+      oauth2Client.getAccessToken((err, token) => {
+        if (err) {
+          reject("Failed to create access token :(");
         }
+        resolve(token);
       });
     });
+
+    this.transporter = nodemailer.createTransport({
+      service: "gmail",
+      auth: {
+        type: "OAuth2",
+        user: this.email,
+        accessToken,
+        clientId: this.clientId,
+        clientSecret: this.clientSecret,
+        refreshToken: this.refreshToken
+      }
+    });
+  }
+
+  async sendEmail(emailOptions) {
+    if (!this.transporter) {
+      await this.createTransporter();
+    }
+
+    await this.transporter.sendMail(emailOptions);
   }
 }
+
 module.exports = EmailSender;
