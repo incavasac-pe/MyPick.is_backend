@@ -1,7 +1,7 @@
  const db = require('../config/db')
 
 class Category {
-        
+ 
     async getCategoryAll(limit) {       
         let results = await db.query('SELECT * FROM mypick.category WHERE status = $1 LIMIT $2', ['A',limit]).catch(console.log); 
         return results ;

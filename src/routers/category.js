@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const Category = require('../controllers/category');
 
-
+ 
 router.get('/list_category', async (req, res) => {
     const response = newResponseJson();
     let status = 400; 
