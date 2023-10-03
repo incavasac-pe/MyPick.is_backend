@@ -1,3 +1,25 @@
+ -- mypick.bookmarks definition
+
+-- Drop table
+
+-- DROP TABLE mypick.bookmarks;
+
+CREATE TABLE mypick.bookmarks (
+	id_bookmarks serial NOT NULL,
+	id_pick int4 NULL,
+	id_user int4 NULL,
+	update_at timestamptz(0) NOT NULL,
+	CONSTRAINT bookmarks_pkey PRIMARY KEY (id_bookmarks)
+);
+
+-- Table Triggers
+
+create trigger update_bookmark_trigger before
+update
+    on
+    mypick.bookmarks for each row execute function mypick.update_bookmark_update_at();
+
+
 -- mypick.category definition
 
 -- Drop table
@@ -11,6 +33,8 @@ CREATE TABLE mypick.category (
 	picks varchar NULL,
 	CONSTRAINT category_pkey PRIMARY KEY (id)
 );
+
+
 -- mypick.choice definition
 
 -- Drop table
@@ -25,21 +49,25 @@ CREATE TABLE mypick.choice (
 	origin text NULL,
 	CONSTRAINT choice_pkey PRIMARY KEY (id_choice)
 );
--- mypick."comments" definition
+
+
+-- mypick.comentario definition
 
 -- Drop table
 
--- DROP TABLE mypick."comments";
+-- DROP TABLE mypick.comentario;
 
-CREATE TABLE mypick."comments" (
-	id_comments serial NOT NULL,
-	id_pick varchar(10) NOT NULL,
-	text_comments varchar(255) NULL,
-	likes varchar(10) NOT NULL,
-	status varchar(10) NOT NULL,
-	id_reply varchar(10) NOT NULL,
-	CONSTRAINT comments_pkey PRIMARY KEY (id_comments)
+CREATE TABLE mypick.comentario (
+	id serial NOT NULL,
+	id_pick int4 NULL,
+	id_user int4 NULL,
+	contenido text NULL,
+	username text NULL,
+	created_at timestamptz NOT NULL DEFAULT now(),
+	CONSTRAINT comentario_pkey PRIMARY KEY (id)
 );
+
+
 -- mypick.picks definition
 
 -- Drop table
@@ -51,34 +79,26 @@ CREATE TABLE mypick.picks (
 	id_category varchar(10) NOT NULL,
 	id_choice1 int4 NOT NULL,
 	id_choice2 int4 NOT NULL,
-	likes varchar(10) NULL,
+	likes int4 NULL,
 	status varchar(10) NULL,
 	id_user int4 NULL,
 	created_at timestamptz NOT NULL DEFAULT now(),
-    update_at timestamptz NOT NULL DEFAULT now(),
 	picks int4 NULL,
+	update_at timestamptz(0) NULL,
 	CONSTRAINT picks_pkey PRIMARY KEY (id_pick)
 );
--- mypick.users definition
-  
-  -- Crear la función de trigger
-CREATE OR REPLACE FUNCTION update_picks_update_at()
-    RETURNS TRIGGER AS
-$$
-BEGIN
-    NEW.update_at = now();
-    RETURN NEW;
-END;
-$$
-LANGUAGE plpgsql;
 
--- Crear el trigger
-CREATE TRIGGER update_picks_trigger
-BEFORE UPDATE ON mypick.picks
-FOR EACH ROW
-EXECUTE FUNCTION update_picks_update_at();
--- .
-Drop table
+-- Table Triggers
+
+create trigger update_picks_trigger before
+update
+    on
+    mypick.picks for each row execute function mypick.update_picks_update_at();
+
+
+-- mypick.users definition
+
+-- Drop table
 
 -- DROP TABLE mypick.users;
 
@@ -90,42 +110,16 @@ CREATE TABLE mypick.users (
 	"password" varchar(255) NOT NULL,
 	photo text NULL,
 	"token" text NULL,
+	username varchar NULL,
+	origin varchar(50) NULL,
 	CONSTRAINT users_email_key UNIQUE (email),
 	CONSTRAINT users_pkey PRIMARY KEY (id)
 );
-ALTER TABLE mypick.users ADD origin varchar(50) NULL;
-
--- mypick.bookmarks definition
-
--- .
-Drop table
-
--- DROP TABLE mypick.bookmarks;
-
-CREATE TABLE mypick.bookmarks (
-	id_bookmarks serial NOT NULL,
-	id_pick  integer, 
-	id_user int4 NULL,
-	CONSTRAINT bookmarks_pkey PRIMARY KEY (id_bookmarks)
-);
 
 
-  -- Crear la función de trigger
-CREATE OR REPLACE FUNCTION update_bookmark_update_at()
-    RETURNS TRIGGER AS
-$$
-BEGIN
-    NEW.update_at = now();
-    RETURN NEW;
-END;
-$$
-LANGUAGE plpgsql;
+-- mypick.vote_pick definition
 
--- Crear el trigger
-CREATE TRIGGER update_bookmark_trigger
-BEFORE UPDATE ON mypick.bookmarks
-FOR EACH ROW
-EXECUTE FUNCTION update_bookmark_update_at();
+-- Drop table
 
 -- DROP TABLE mypick.vote_pick;
 
@@ -134,33 +128,26 @@ CREATE TABLE mypick.vote_pick (
 	id_pick int4 NULL,
 	id_choice int4 NULL,
 	id_user int4 NULL,
-	update_at timestamptz(0) NOT NULL
+	update_at timestamptz(0) NOT NULL,
+	CONSTRAINT uc_vote_pick_user_pick UNIQUE (id_user, id_pick)
 );
 
-solo un registro por id_user id_pick
 
+-- mypick.reply definition
 
--- Agregar restricción UNIQUE compuesta
-ALTER TABLE mypick.vote_pick
-ADD CONSTRAINT uc_vote_pick_user_pick UNIQUE (id_user, id_pick);
+-- Drop table
 
-
-CREATE TABLE mypick.comentario (
-  id SERIAL PRIMARY KEY,
-  id_pick INTEGER,
- id_user INTEGER,
-  contenido TEXT ,
-  username text,
-  created_at timestamptz NOT NULL DEFAULT now() 
-);
+-- DROP TABLE mypick.reply;
 
 CREATE TABLE mypick.reply (
-  id SERIAL PRIMARY KEY,
-  comentario_id INTEGER,
-  contenido TEXT,
-   username text,
-  created_at timestamptz NOT NULL DEFAULT now(), 
-  FOREIGN KEY (comentario_id) REFERENCES Comentario(id)
+	id serial NOT NULL,
+	comentario_id int4 NULL,
+	contenido text NULL,
+	username text NULL,
+	created_at timestamptz NOT NULL DEFAULT now(),
+	foto varchar(100) NULL,
+	CONSTRAINT reply_pkey PRIMARY KEY (id),
+	CONSTRAINT reply_comentario_id_fkey FOREIGN KEY (comentario_id) REFERENCES mypick.comentario(id)
 );
 
 
@@ -176,6 +163,28 @@ BEGIN
     dias := EXTRACT(DAY FROM diff_interval);
     horas := EXTRACT(HOUR FROM diff_interval);
     minutos := EXTRACT(MINUTE FROM diff_interval);
+END;
+$function$
+;
+
+CREATE OR REPLACE FUNCTION mypick.update_bookmark_update_at()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+    NEW.update_at = now();
+    RETURN NEW;
+END;
+$function$
+;
+
+CREATE OR REPLACE FUNCTION mypick.update_picks_update_at()
+ RETURNS trigger
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+    NEW.update_at = now();
+    RETURN NEW;
 END;
 $function$
 ;

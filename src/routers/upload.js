@@ -5,9 +5,6 @@ const Auth = require('../controllers/auth');
 const path = require('path'); 
 const fs = require('fs');  
 
-router.get('/', function (req, res) {
-  res.render('uploadForm.ejs')
-})
  
 const _dirname = './public/uploads';
 
