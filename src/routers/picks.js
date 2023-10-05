@@ -16,7 +16,8 @@ router.get('/list_all_picks', async (req, res) => {
     let status = 400; 
     response.error = true;  
     const limit = req.query.limit ?? 100;
-    exist = await new Picks().getPicksAll(limit);
+    const id_category = req.query.id_category  ?? '';
+    exist = await new Picks().getPicksAll(limit,id_category);
     
     if (exist.rowCount === 0) {              
         response.msg = `picks empty`;        
@@ -35,14 +36,14 @@ router.get('/list_my_picks', async (req, res) => {
     let status = 400; 
     response.error = true; 
     const email = req.query.email;
-    
+    const id_category = req.query.id_category  ?? '';
     const result_user = await new Auth().getUserByEmail(email);
     if (result_user.rowCount == 0) {  
         response.msg = `User does not exist`;  
         return res.status(status).json(response);   
     } 
     const user = result_user.rows[0].id
-    exist = await new Picks().getPicks(user);
+    exist = await new Picks().getPicks(user,id_category);
     
     if (exist.rowCount === 0) {              
         response.msg = `picks empty`;        

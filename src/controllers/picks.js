@@ -2,8 +2,8 @@
 
 class Picks {
         
-    async getPicksAll(limit) {       
-        let results = await db.query(`SELECT
+    async getPicksAll(limit,id_category) { 
+    let sql =   `SELECT
         p.id_pick AS id,
         c1.id_choice AS id_choice1,
         c2.id_choice AS id_choice2,
@@ -20,15 +20,19 @@ class Picks {
       FROM mypick.picks p
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
-      JOIN mypick.category c ON p.id_category::integer = c.id 
-      ORDER BY p.update_at asc 
-      LIMIT ${limit}` ).catch(console.log); 
+      JOIN mypick.category c ON p.id_category::integer = c.id `;
+      if(id_category!=''){
+        sql+= ` WHERE p.id_category::integer=${id_category}`;
+      }
+      sql+=`  ORDER BY p.update_at asc  
+       LIMIT ${limit}` 
+        let results = await db.query(sql ).catch(console.log); 
         return results ;
     }
 
    
-    async getPicks(user) {       
-      const newLocal = `SELECT
+    async getPicks(user,id_category) {  
+     let sql = `SELECT
         p.id_pick AS id,
         c.name AS category,
         c.status,
@@ -48,8 +52,12 @@ class Picks {
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
       JOIN mypick.category c ON p.id_category::integer = c.id
       JOIN mypick.users u ON p.id_user::integer = u.id
-      WHERE p.id_user =$1`;
-        let results = await db.query(newLocal, [user]).catch(console.log); 
+      WHERE p.id_user =$1`;  
+        if(id_category!=''){
+        sql+= ` AND p.id_category::integer=${id_category}`;
+      }   
+   
+        let results = await db.query(sql, [user]).catch(console.log); 
         return results ;
     }
  

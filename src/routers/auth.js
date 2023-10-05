@@ -59,7 +59,7 @@ const base_url = process.env.BASE_URL;
                 <body>
                 <h1>Welcome to MyPick!</h1>
                 <p>Please activate your account by clicking on the following link:</p>
-                <a href="http://localhost:3000/activate?token=${token}">Activate account here</a>
+                <a href="${base_url}/activate?token=${token}">Activate account here</a>
                 </body>
                 </html>` 
 
