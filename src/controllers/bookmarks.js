@@ -10,9 +10,8 @@ class Bookmarks {
         let results = await db.query('SELECT * FROM mypick.bookmarks WHERE id_user = $1 and id_pick = $2', [id_user,id_pick]).catch(console.log); 
         return results ;
     }
-    async getBookmarksByUser (id_user) {       
-        let results = await db.query(`
-                    SELECT
+    async   getBookmarksByUser (id_user,id_category) {
+    let sql = `  SELECT
                     p.id_user AS user,
                     p.id_pick AS id,
                     c.name AS category,
@@ -36,8 +35,11 @@ class Bookmarks {
                     JOIN mypick.users u ON p.id_user::integer = u.id
                     JOIN mypick.bookmarks b ON p.id_pick = b.id_pick
                 WHERE
-                    b.id_user =$1
-        `, [id_user]).catch(console.log); 
+                    b.id_user =$1 `; 
+                  if(id_category!=''){
+                    sql+= ` AND p.id_category::integer=${id_category}`;
+                  }  
+        let results = await db.query(sql, [id_user]).catch(console.log); 
         return results ;
     }
 

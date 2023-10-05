@@ -31,7 +31,7 @@ router.get('/list_trendingTopics_category', async (req, res) => {
     if (id_category!=undefined ) { 
     exist = await new TrendingTopics().getTrendingTopicsId(id_category);
     
-    if (exist.rowCount === 0) {              
+    if (exist?.rowCount === 0) {              
         response.msg = `TrendingTopics empty`;        
     }else  {      
         response.error = false;

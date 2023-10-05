@@ -29,7 +29,7 @@ router.get('/my_bookmarks', async (req, res) => {
     let status = 400; 
     response.error = true; 
     const email = req.query.email;
-
+    const id_category = req.query.id_category  ?? '';
     const result_user = await new Auth().getUserByEmail(email);
     if (result_user.rowCount == 0) {  
         response.msg = `User does not exist`;  
@@ -37,7 +37,7 @@ router.get('/my_bookmarks', async (req, res) => {
     } 
     const id_user = result_user.rows[0].id  
  
-    exist = await new Bookmarks().getBookmarksByUser(id_user);
+    exist = await new Bookmarks().getBookmarksByUser(id_user,id_category);
     
     if (exist.rowCount === 0) {              
         response.msg = `Bookmarks empty`;        
