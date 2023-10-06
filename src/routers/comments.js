@@ -98,6 +98,32 @@ router.post('/register_reply', async (req, res) => {
 });
 
 
+  router.post('/register_like_comments', async (req, res) => {
+    const response = newResponseJson();
+    let status = 400;
+    response.error = true;
+    
+    const { id_pick,comentario_id } = req.body;    
+    if (id_pick === '' && comentario_id ==='' ) {
+      response.msg = 'empty data';
+      return res.status(status).json(response);
+    }
+    
+    const pick_update = await new Comments().updateLikesComments(id_pick,comentario_id)
+    
+    if (!pick_update?.rowCount || pick_update.rowCount === 0) {
+      response.msg = 'An error occurred while trying to update mypicks likes';
+      return res.status(status).json(response);
+    } 
+     
+    response.error = false;
+    response.msg = 'Like Comments successfully';   
+    status = 201;
+    
+    res.status(status).json(response);
+  });
+
+
 function newResponseJson() {
     return {error: true, msg: "", data: []};
 }
