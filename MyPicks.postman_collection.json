@@ -1,0 +1,912 @@
+{
+	"info": {
+		"_postman_id": "4fcce389-569a-4f93-b519-e9ce55a972d5",
+		"name": "MyPicks",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "2354114",
+		"_collection_link": "https://grey-eclipse-155080.postman.co/workspace/API-REST-SIMPLEX-FOL~723c67d6-5a53-4caf-8e69-dc753aa00d87/collection/2354114-4fcce389-569a-4f93-b519-e9ce55a972d5?action=share&source=collection_link&creator=2354114"
+	},
+	"item": [
+		{
+			"name": "Usuario",
+			"item": [
+				{
+					"name": "Registro",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"full_name\": \"Norbelys Naguanagua\",\r\n    \"email\": \"norbelysnaguanagua21@email.com\",\r\n    \"password\": \"Qwerty12\",\r\n    \"origin\":\"mipick\"\r\n  \r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/register",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"register"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Inicio de sesion",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{     \r\n    \"email\": \"norbelysnaguanagua21@gmail.com\",\r\n    \"password\": \"123\"    \r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/login",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"login"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar contraseña",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {     \r\n    \"email\": \"norbelysnaguanagua21@email.com\",\r\n    \"new_password\": \"Qwerty123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/change_password",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"change_password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar nombre",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {     \r\n    \"email\": \"norbelysnaguanagua21@gmail.com\",\r\n    \"full_name\": \"Qwerty123\"\r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/change_profile",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"change_profile"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "activar cuenta",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/activate_account?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vcmJlbHlzbmFndWFuYWd1YWFAZW1haWwuY29tIiwiZnVsbF9uYW1lIjoiTm9yYmVseXMgTmFndWFuYWd1YSIsImlhdCI6MTY5MTk0MTE3MiwiZXhwIjoxNjkxOTQ0NzcyfQ.CG4y7QRQ9OrG14rl5O3mh6wWxoVjYtW3Z5FtqA_axD8",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"activate_account"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vcmJlbHlzbmFndWFuYWd1YWFAZW1haWwuY29tIiwiZnVsbF9uYW1lIjoiTm9yYmVseXMgTmFndWFuYWd1YSIsImlhdCI6MTY5MTk0MTE3MiwiZXhwIjoxNjkxOTQ0NzcyfQ.CG4y7QRQ9OrG14rl5O3mh6wWxoVjYtW3Z5FtqA_axD8"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Enviar link para resetear contraseña",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{     \r\n    \"email\": \"norbelysnaguanagua21@gmail.com\"    \r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/link_password",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"link_password"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Validar token para resetear el contraseña",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/reset_password?token=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vcmJlbHlzbmFndWFuYWd1YWFAZW1haWwuY29tIiwiZnVsbF9uYW1lIjoiTm9yYmVseXMgTmFndWFuYWd1YSIsImlhdCI6MTY5MTk0NTE2MiwiZXhwIjoxNjkxOTQ4NzYyfQ.j_cEpj9aKRPjs1IT65xn6iRlkQUKsGjbUNxJP5fsvuQ",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"reset_password"
+							],
+							"query": [
+								{
+									"key": "token",
+									"value": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJlbWFpbCI6Im5vcmJlbHlzbmFndWFuYWd1YWFAZW1haWwuY29tIiwiZnVsbF9uYW1lIjoiTm9yYmVseXMgTmFndWFuYWd1YSIsImlhdCI6MTY5MTk0NTE2MiwiZXhwIjoxNjkxOTQ4NzYyfQ.j_cEpj9aKRPjs1IT65xn6iRlkQUKsGjbUNxJP5fsvuQ"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Cambiar foto",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/norbe/Desktop/Screenshot_3.png"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/change_photo?email=norbelysnaguanagua21@gmail.com",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"change_photo"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "norbelysnaguanagua21@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Obtener foto",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "file",
+									"type": "file",
+									"src": "/C:/Users/norbe/Downloads/WhatsApp Image 2023-08-18 at 7.55.31 PM.jpeg",
+									"disabled": true
+								}
+							]
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/see_photo?img=Screenshot_1.png",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"see_photo"
+							],
+							"query": [
+								{
+									"key": "img",
+									"value": "Screenshot_1.png"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Categorias",
+			"item": [
+				{
+					"name": "Listar categorias",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/list_category?limit=2",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"list_category"
+							],
+							"query": [
+								{
+									"key": "limit",
+									"value": "2"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registro Categorias",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "    {\r\n    \"category\": \"Electronics \",\r\n    \"status_c\": \"A\"  \r\n}\r\n",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/register_category",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"register_category"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Pick",
+			"item": [
+				{
+					"name": "Registrar picks",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "photo1",
+									"type": "file",
+									"src": "/C:/Users/norbe/Desktop/Screenshot_1.png"
+								},
+								{
+									"key": "photo2",
+									"type": "file",
+									"src": "/C:/Users/norbe/Desktop/Screenshot_2.png"
+								},
+								{
+									"key": "email",
+									"value": "norbelysnaguanagua21@gmail.com",
+									"type": "text"
+								},
+								{
+									"key": "name_choice2",
+									"value": "ron_postman",
+									"type": "text"
+								},
+								{
+									"key": "name_choice1",
+									"value": "agua_postman",
+									"type": "text"
+								},
+								{
+									"key": "id_category",
+									"value": "7",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/register_picks",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"register_picks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar todos los pick",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/list_all_picks?id_category=13&limit=1",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"list_all_picks"
+							],
+							"query": [
+								{
+									"key": "id_category",
+									"value": "13"
+								},
+								{
+									"key": "limit",
+									"value": "1"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Listar todos los pick scraping",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/scrapping",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"scrapping"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Mi mypicks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/list_my_picks?email=norbelysnaguanagua21@gmail.com",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"list_my_picks"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "norbelysnaguanagua21@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My picks vote",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/my_pick_vote?email=systemnane22@gmail.com",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"my_pick_vote"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "systemnane22@gmail.com"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Porcentaje de seleccion de los picks",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_pick\":4\r\n    \"id_choice\":\r\n    \"email\":\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/select_picks",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"select_picks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Like picks",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"id_pick\":4\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/register_like",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"register_like"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Bookmark",
+			"item": [
+				{
+					"name": "Listar all bookmark",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/list_bookmarks",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"list_bookmarks"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "My bookmarks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/my_bookmarks?email=norbelysnaguanagua21@gmail.com&id_category=13",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"my_bookmarks"
+							],
+							"query": [
+								{
+									"key": "email",
+									"value": "norbelysnaguanagua21@gmail.com"
+								},
+								{
+									"key": "id_category",
+									"value": "13"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar bookmarks",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n     \"id_pick\":1,\r\n     \"email\":\"systemnane22@gmail.com\" \r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/register_bookmarks",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"register_bookmarks"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Comentarios",
+			"item": [
+				{
+					"name": "Listar los comentarios por pick",
+					"protocolProfileBehavior": {
+						"disableBodyPruning": true
+					},
+					"request": {
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/list_comments_bypicks?id_pick=17",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"list_comments_bypicks"
+							],
+							"query": [
+								{
+									"key": "id_pick",
+									"value": "17"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "registrar comentarios",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"systemnane22@gmail.com\",\r\n    \"id_pick\":4,\r\n    \"contenido\":\"HOLA SOY NORBE 33333\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/register_comments",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"register_comments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar el reply",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"email\":\"systemnane22@gmail.com\",\r\n    \"id_pick\":4,\r\n    \"comentario_id\":2,\r\n    \"contenido\":\"Que dices? no es el mejor para nada 33\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/register_reply",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"register_reply"
+							],
+							"query": [
+								{
+									"key": "id_pick",
+									"value": "4",
+									"disabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Registrar el like de los comentarios",
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": "{    \r\n    \"id_pick\":1,\r\n    \"comentario_id\":3\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/register_like_comments",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"path": [
+								"register_like_comments"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "TrendingTopics",
+			"item": [
+				{
+					"name": "Listar los 3 top",
+					"request": {
+						"method": "GET",
+						"header": []
+					},
+					"response": []
+				},
+				{
+					"name": "Listar los 3 top por categoria",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/list_trendingTopics_category?id_category=5",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"list_trendingTopics_category"
+							],
+							"query": [
+								{
+									"key": "id_category",
+									"value": "5"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "EXTERNA",
+			"item": [
+				{
+					"name": "Api externa canopy amazon picks",
+					"request": {
+						"method": "GET",
+						"header": [],
+						"url": {
+							"raw": "{{ulrMyPicksprod}}/list_products_api_externa?search=lenovo",
+							"protocol": "http",
+							"host": [
+								"{{ulrMyPicksprod}}"
+							],
+							"port": "3100",
+							"path": [
+								"list_products_api_externa"
+							],
+							"query": [
+								{
+									"key": "search",
+									"value": "lenovo"
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Api externa canopy amazon",
+					"request": {
+						"auth": {
+							"type": "apikey",
+							"apikey": [
+								{
+									"key": "value",
+									"value": "abe684f2-c3ac-4099-bbbf-d3a1fe264336",
+									"type": "string"
+								},
+								{
+									"key": "key",
+									"value": "API-KEY",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "graphql",
+							"graphql": {
+								"query": "query MyQuery {\r\n  amazonProductSearchResults(input: {searchTerm: \"nike\", domain: US}) {\r\n    productResults(input: {}) {\r\n      results {\r\n        imageUrls\r\n        price {\r\n          value\r\n        }\r\n        title\r\n      }\r\n    }\r\n  }\r\n}",
+								"variables": ""
+							}
+						},
+						"url": {
+							"raw": "https://graphql.canopyapi.co",
+							"protocol": "https",
+							"host": [
+								"graphql",
+								"canopyapi",
+								"co"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Contact",
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "content",
+							"value": "holaa prueba envio correo desde el servidor ",
+							"type": "text"
+						},
+						{
+							"key": "subject",
+							"value": "PRUEBA NUEVA CUENTA oauth otro ida",
+							"type": "text"
+						},
+						{
+							"key": "to",
+							"value": "norbelysnaguanagua21@gmail.com",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "http://159.89.42.65:3100/send_email_contact",
+					"protocol": "http",
+					"host": [
+						"159",
+						"89",
+						"42",
+						"65"
+					],
+					"port": "3100",
+					"path": [
+						"send_email_contact"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "ulrMyPicksprod",
+			"value": "https://mypick.is/api"
+		}
+	]
+}
