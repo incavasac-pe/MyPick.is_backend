@@ -2,6 +2,27 @@ const express = require("express");
 const router = express.Router();
 const TrendingTopics = require('../controllers/trendingTopics'); 
 
+
+router.get('/list_category_with_trendingTopics', async (req, res) => {
+    const response = newResponseJson();
+    let status = 400; 
+    response.error = true;  
+ 
+    exist = await new TrendingTopics().getTrendingTopicsCategory();
+    
+    if (exist.rowCount === 0) {              
+        response.msg = `category TrendingTopics empty`;        
+    }else  { 
+     
+            response.error = false;
+            response.msg = `List category for TrendingTopics`; 
+            response.data =  exist.rows
+            status = 200;        
+    }
+    
+    res.status(status).json(response)
+});
+
 router.get('/list_trendingTopics', async (req, res) => {
     const response = newResponseJson();
     let status = 400; 
