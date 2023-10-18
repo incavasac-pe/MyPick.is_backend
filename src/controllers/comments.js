@@ -56,34 +56,47 @@ class Comments {
         return response;
       }
 
-      async  createReply(comentario_id, contenido,username,foto) {
-        let response;
-        try {
-          const query = 'INSERT INTO  mypick.reply (comentario_id, contenido, username,foto, created_at) VALUES ($1, $2,$3 ,$4,now()) RETURNING id';
-          const values = [comentario_id, contenido,username,foto];
-          const result_insert = await db.query(query, values);
-          response = result_insert;
-        } catch (err) {
-          response = err;
-        }
-        return response;
-      }
-
-  
-    async updateLikesComments(id_pick,comentario_id) {
-      let response
+    async  createReply(comentario_id, contenido,username,foto) {
+      let response;
       try {
-          const query = 'UPDATE mypick.comentario  SET likes = likes + 1 where id_pick =$1 and id=$2';
-          const values = [id_pick,comentario_id];
-          const result_insert = await db.query(query, values);           
-          response = result_insert
-     
-   } catch (err) { 
+        const query = 'INSERT INTO  mypick.reply (comentario_id, contenido, username,foto, created_at) VALUES ($1, $2,$3 ,$4,now()) RETURNING id';
+        const values = [comentario_id, contenido,username,foto];
+        const result_insert = await db.query(query, values);
+        response = result_insert;
+      } catch (err) {
+        response = err;
+      }
+      return response;
+    }
+   
+  async  updateLikesComments(id_pick, comentario_id, type) {
+    let response;
+    try {
+      let query;
+      if (type) {
+        query = 'UPDATE mypick.comentario SET likes = CASE WHEN likes > 0 THEN likes - 1 ELSE likes END WHERE id_pick = $1 AND id = $2';
+      } else {
+        query = 'UPDATE mypick.comentario SET likes = likes + 1 WHERE id_pick = $1 AND id = $2';
+      }
+      const values = [id_pick, comentario_id];
+      const result_insert = await db.query(query, values);
+      response = result_insert;
+    } catch (err) {
       response = err;
-     }  
-     return response
+    }
+    return response;
   }
-              
+
+  async getLikesbyidpick(id_user,id_pick) {       
+    let results = await db.query('SELECT * from mypick.comments_like_byuser  where id_user=$1  and id_pick =$2', [id_user,id_pick]).catch(console.log); 
+    return results ;
+}      
+
+  async insertLikecomments_user(id_pick,comentario_id,id_user) {     
+    let results = await db.query(`SELECT mypick.actualizar_coment_id_like($1, $2, $3)`, [id_pick,id_user,comentario_id]).catch(console.log); 
+    return results ;
+  }   
+    
 }
 
 module.exports = Comments;
