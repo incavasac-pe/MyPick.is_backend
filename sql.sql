@@ -150,6 +150,13 @@ CREATE TABLE mypick.reply (
 	CONSTRAINT reply_comentario_id_fkey FOREIGN KEY (comentario_id) REFERENCES mypick.comentario(id)
 );
 
+CREATE TABLE mypick.comments_like_byuser (
+    id SERIAL PRIMARY KEY,
+    id_pick INTEGER,
+    id_user INTEGER,
+    coment_id_like TEXT[]
+);
+
 
 CREATE OR REPLACE FUNCTION mypick.calcular_diferencia_(fecha2 timestamp without time zone, OUT dias integer, OUT horas integer, OUT minutos integer)
  RETURNS record
@@ -188,3 +195,22 @@ BEGIN
 END;
 $function$
 ;
+
+
+CREATE OR REPLACE FUNCTION mypick.actualizar_coment_id_like(p_id_pick INTEGER, p_id_user INTEGER, p_coment_id_like TEXT[])
+RETURNS VOID AS
+$$
+BEGIN
+    UPDATE mypick.comments_like_byuser
+    SET coment_id_like = p_coment_id_like
+    WHERE id_pick = p_id_pick AND id_user = p_id_user;
+    
+    IF NOT FOUND THEN
+        INSERT INTO mypick.comments_like_byuser (id_pick, id_user, coment_id_like)
+        VALUES (p_id_pick, p_id_user, p_coment_id_like);
+    END IF;
+    
+    COMMIT;
+END;
+$$
+LANGUAGE plpgsql;
