@@ -12,20 +12,20 @@ class EmailSender {
   }
 
   async createTransporter() {
-    const oauth2Client = new OAuth2(
+   /* const oauth2Client = new OAuth2(
       this.clientId,
       this.clientSecret,
       "https://developers.google.com/oauthplayground"
     );
 
-    oauth2Client.setCredentials({
+   oauth2Client.setCredentials({
       refresh_token: this.refreshToken
     });
 
     const accessToken = await new Promise((resolve, reject) => {
       oauth2Client.getAccessToken((err, token) => {
         if (err) {
-          reject("Failed to create access token :(");
+          reject("Failed to create access token :("+err);
         }
         resolve(token);
       });
@@ -40,6 +40,16 @@ class EmailSender {
         clientId: this.clientId,
         clientSecret: this.clientSecret,
         refreshToken: this.refreshToken
+      }
+    });*/
+       this.transporter = nodemailer.createTransport({
+      host: process.env.EMAIL_HOST,
+      port: 587,
+      secure: false, // true si usas SSL/TLS,
+      requireTLS: true,
+      auth: {
+        user: process.env.EMAIL_ADDRESS,
+        pass: process.env.EMAIL_PASSWORD
       }
     });
   }
