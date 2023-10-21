@@ -17,16 +17,29 @@ router.get('/list_all_picks', async (req, res) => {
     response.error = true;  
     const limit = req.query.limit ?? 100;
     const id_category = req.query.id_category  ?? '';
-    exist = await new Picks().getPicksAll(limit,id_category);
-    
+    const ip_maq = req.query.ip_maq  ?? '';
+    const email = req.query.emal  ?? '';
+ 
+     exist = await new Picks().getPicksAll(limit,id_category);
     if (exist.rowCount === 0) {              
         response.msg = `picks empty`;        
-    }else  { 
+    }else  {  
+
+    let id_user = 999999; 
+    const result_user = await new Auth().getUserByEmail(email);
+    if (result_user?.rowCount > 0) {  
+      id_user = result_user.rows[0].id
+    } 
+      const existLikePick = await new Picks().getLikesByUserIdAndIp(ip_maq,id_user);
+      let arrayInsert = []
+          arrayInsert = existLikePick?.rowCount > 0 ? existLikePick.rows[0].id_pick_like  : arrayInsert
      
-            response.error = false;
-            response.msg = `List picks`; 
-            response.data =  exist.rows
-            status = 200;        
+      const flag = validarNumeroExistente(arrayInsert, exist.rows[0].id) 
+        response.error = false;
+        response.msg = `List picks`; 
+        response.data =  exist.rows
+        response.other = flag
+        status = 200;        
     }    
     res.status(status).json(response)
 });
@@ -178,23 +191,47 @@ router.post('/register_picks', async (req, res) => {
     const response = newResponseJson();
     let status = 400;
     response.error = true;
-    
-    const { id_pick } = req.body;    
+     
+    const { id_pick,ip_maq ,email} = req.body;     
     if (id_pick === '' ) {
       response.msg = 'empty data';
       return res.status(status).json(response);
     }
-    
-    const pick_update = await new Picks().updateLikesPicks(id_pick);  
-    
+
+    let id_user = 999999; 
+    const result_user = await new Auth().getUserByEmail(email);
+    if (result_user?.rowCount > 0) {  
+      id_user = result_user.rows[0].id
+    } 
+      
+    existLikePick = await new Picks().getLikesByUserIdAndIp(ip_maq, id_user);
+    let arrayInsert = [];
+    arrayInsert = existLikePick?.rowCount > 0 ? existLikePick.rows[0].id_pick_like  : arrayInsert;
+  
+    const newArray = validarNumeroExistente(arrayInsert, id_pick) ;
+    if (newArray) {
+        const index = arrayInsert.indexOf(id_pick.toString());
+        if (index > -1) {
+            arrayInsert.splice(index, 1);
+        }
+    } else {
+        arrayInsert.push(id_pick.toString())
+    } 
+   
+    await new Picks().insertLikePick(ip_maq,id_user,arrayInsert)   
+    const pick_update = await new Picks().updateLikesPicks(id_pick,newArray);  
+     
     if (!pick_update?.rowCount || pick_update.rowCount === 0) {
       response.msg = 'An error occurred while trying to update mypicks likes';
       return res.status(status).json(response);
     } 
+
      
     response.error = false;
     response.msg = 'Like pick successfully';   
     status = 200;
+    response.data =pick_update.rows
+     response.other = !newArray
     
     res.status(status).json(response);
   });
@@ -227,8 +264,19 @@ router.get('/my_pick_vote', async (req, res) => {
   res.status(status).json(response)
 });
 
+function validarNumeroExistente(array, numero) { 
+    if (array.includes(numero.toString())) { 
+        return true;
+    } else { 
+        return false;
+    }
+}
+  function eliminarPuntos(texto) {
+  return texto.replace(/\./g, '');
+}
+
 
 function newResponseJson() {
-    return {error: true, msg: "", data: []};
+    return {error: true, msg: "", data: [],other:false};
 }
 module.exports = router;

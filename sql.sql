@@ -157,6 +157,13 @@ CREATE TABLE mypick.comments_like_byuser (
     coment_id_like TEXT[]
 );
 
+  
+CREATE TABLE mypick.pick_like_byuser (
+	id serial NOT NULL,
+	ip text NULL,
+	id_user int4 NULL,
+	id_pick_like _text NULL
+);
 
 CREATE OR REPLACE FUNCTION mypick.calcular_diferencia_(fecha2 timestamp without time zone, OUT dias integer, OUT horas integer, OUT minutos integer)
  RETURNS record
@@ -209,8 +216,26 @@ BEGIN
         INSERT INTO mypick.comments_like_byuser (id_pick, id_user, coment_id_like)
         VALUES (p_id_pick, p_id_user, p_coment_id_like);
     END IF;
-    
-    COMMIT;
+     
 END;
 $$
 LANGUAGE plpgsql;
+
+       
+CREATE OR REPLACE FUNCTION mypick.actualizar_id_like(ip_en text, p_id_user integer, id_like text[])
+ RETURNS void
+ LANGUAGE plpgsql
+AS $function$
+BEGIN
+    UPDATE mypick.pick_like_byuser
+    SET  id_pick_like = id_like, id_user = p_id_user, ip = ip_en
+    WHERE ip = ip_en OR id_user = p_id_user;
+    
+    IF NOT FOUND THEN
+        INSERT INTO mypick.pick_like_byuser (ip, id_user, id_pick_like)
+        VALUES (ip_en, p_id_user, id_like);
+    END IF;
+     
+END;
+$function$
+;

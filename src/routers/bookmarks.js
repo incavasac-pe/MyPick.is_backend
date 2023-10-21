@@ -54,44 +54,41 @@ router.get('/my_bookmarks', async (req, res) => {
  router.post('/register_bookmarks', async (req, res) => {
     const response = newResponseJson();
     let status = 400;
-    let bandera = false;
-    response.error = true;
+    response.error = false;
     const { id_pick, email} = req.body;
      
-    if (id_pick == "" || email == "") {
-        bandera = true;        
+    if (id_pick == "" || email == "") {       
+        response.error = true
         response.msg = 'empty data';      
     }
     const result_user = await new Auth().getUserByEmail(email);
     if (result_user.rowCount == 0) {  
         response.msg = `User does not exist`;  
+         response.error = true
         return res.status(status).json(response);   
     } 
     const id_user = result_user.rows[0].id  
 
-    exist = await new Bookmarks().getBookmarksByUserIdPick (id_user,id_pick);    
-    if (exist.rowCount > 0) {
-        bandera = true;       
-        response.msg = `Bookmark exist for this user`;        
-    }
-    if (!bandera) {      
-        let result_insert = await new Bookmarks().createBookmarks (id_pick, id_user );
-      
-        if (! result_insert ?. rowCount || result_insert ?. rowCount == 0) {           
-            response.msg = `An error occurred while trying to create a Bookmarks `;
-            status = 500;            
-        } else { 
+    exist = await new Bookmarks().createOrDeleteBookmark(id_pick,id_user);   
+
+    if (exist.command =='INSERT' ) {  
+            response.other = true     
             response.error = false;
-            response.msg = `Bookmark is created successfully`; 
-            response.data =  result_insert.rows[0].id
+            response.msg = `Bookmarks is created successfully`;           
             status = 201;
-        }
-    }
-    
+    }else if(exist.command =='DELETE'){
+        response.other = false 
+           response.msg = `Bookmarks is delete successfully`;
+           status = 200;
+    }else{
+         response.msg = `An error occurred while trying to create a Bookmarks `;
+            status = 500; 
+    }       
+        
     res.status(status).json(response)
 });
    
 function newResponseJson() {
-    return {error: true, msg: "", data: []};
+    return {error: true, msg: "", data: [],other:false};
 }
 module.exports = router;
