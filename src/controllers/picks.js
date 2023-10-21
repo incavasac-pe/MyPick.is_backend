@@ -132,19 +132,25 @@ JOIN
   }
 
   
-  async updateLikesPicks(id_pick) {
+  async updateLikesPicks(id_pick,type) {
     let response
-    try {
-        const query = 'UPDATE mypick.picks  SET likes = likes + 1 where id_pick =$1';
-        const values = [id_pick];
-        const result_insert = await db.query(query, values);           
-        response = result_insert
-   
- } catch (err) { 
-    response = err;
-   }  
-   return response
-}
+      try {
+         let query;
+        if (type) {
+          query = 'UPDATE mypick.picks SET likes = CASE WHEN likes > 0 THEN likes - 1 ELSE likes END WHERE id_pick = $1 RETURNING likes';
+        } else {
+          query = 'UPDATE mypick.picks SET likes = likes + 1 where id_pick =$1 RETURNING likes';
+        }
+          const values = [id_pick];
+          const result_insert = await db.query(query, values);           
+          response = result_insert
+     
+      } catch (err) { 
+      response = err;
+     }  
+     return response
+  }
+ 
 async createVoto(id_pick,id_choice,id_user ) {
   let response
   try {
@@ -185,7 +191,28 @@ async getMyPickerVote (id_user) {
                 where vp.id_user = $1 
   `, [id_user]).catch(console.log); 
   return results ;
-}          
+} 
+
+ 
+async getLikesByUserIdAndIp(ip, id_user) {
+  let query = 'SELECT * FROM mypick.pick_like_byuser ';
+  const values = [ip];
+  if (id_user !== 999999) {
+    query += ' WHERE  ip= $1 OR id_user = $2  ';
+    values.push(id_user); 
+  }else{
+    query += ' WHERE ip = $1'; 
+  } 
+  
+    const results = await db.query(query, values);
+    return results;
+ 
+}
+ async insertLikePick (ip,id_user,id_pick) {   
+    let results = await db.query(`SELECT mypick.actualizar_id_like($1, $2, $3)`, [ip,id_user,id_pick]).catch(console.log); 
+    return results ;
+  } 
+
 }
 
 module.exports = Picks;

@@ -5,11 +5,7 @@ class Bookmarks {
         let results = await db.query('SELECT * FROM mypick.bookmarks').catch(console.log); 
         return results ;
     }
- 
-    async getBookmarksByUserIdPick (id_user,id_pick) {       
-        let results = await db.query('SELECT * FROM mypick.bookmarks WHERE id_user = $1 and id_pick = $2', [id_user,id_pick]).catch(console.log); 
-        return results ;
-    }
+  
     async   getBookmarksByUser (id_user,id_category) {
     let sql = `  SELECT
                     p.id_user AS user,
@@ -43,6 +39,44 @@ class Bookmarks {
         return results ;
     }
 
+async  createOrDeleteBookmark(id_pick, id_user) {
+  let response;
+  try {
+    const bookmarkExists = await this.checkBookmarkExists(id_pick, id_user);
+    if (bookmarkExists) {
+      // El marcador ya existe, así que lo borramos
+      response = await this.deleteBookmark(id_pick, id_user);
+    } else {
+      // El marcador no existe, así que lo creamos
+      response = await this.createBookmark(id_pick, id_user);
+    }
+  } catch (err) {
+    response = err;
+  }
+  return response;
+}
+
+async  checkBookmarkExists(id_pick, id_user) {
+  const query = 'SELECT EXISTS(SELECT 1 FROM mypick.bookmarks WHERE id_pick=$1 AND id_user=$2)';
+  const values = [id_pick, id_user];
+  const result = await db.query(query, values);
+  return result.rows[0].exists;
+}
+
+async  createBookmark(id_pick, id_user) {
+  const query = 'INSERT INTO mypick.bookmarks (id_pick, id_user, update_at) VALUES ($1, $2, now()) RETURNING id_bookmarks';
+  const values = [id_pick, id_user];
+  const result_insert = await db.query(query, values);
+  return result_insert;
+}
+
+async  deleteBookmark(id_pick, id_user) {
+  const query = 'DELETE FROM mypick.bookmarks WHERE id_pick=$1 AND id_user=$2';
+  const values = [id_pick, id_user];
+  const result_delete = await db.query(query, values);
+  return result_delete;
+}
+/*
     async createBookmarks (id_pick, id_user ) {
         let response
         try {
@@ -57,7 +91,20 @@ class Bookmarks {
        return response
     } 
 
-              
+  async deleteBookmarks (id_pick, id_user ) {
+        let response
+        try {
+            const query = 'DELETE FROM mypick.bookmarks WHERE id_pick=$1 and id_user = $2';
+            const values = [id_pick, id_user];
+            const result_delete = await db.query(query, values);           
+            response = result_delet
+       
+     } catch (err) { 
+        response = err;
+       }  
+       return response
+    } 
+          */    
 }
 
 module.exports = Bookmarks;
