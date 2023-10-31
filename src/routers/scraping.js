@@ -19,6 +19,7 @@ router.get('/list_products_api_externa', async (req, res) => {
             value
           }
           title
+          url
         }
       }
     }
