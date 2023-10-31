@@ -21,20 +21,20 @@ router.get('/list_all_picks', async (req, res) => {
     const email = req.query.emal  ?? '';
  
      exist = await new Picks().getPicksAll(limit,id_category);
-    if (exist.rowCount === 0) {              
+    if (exist?.rowCount === 0) {              
         response.msg = `picks empty`;        
     }else  {  
 
     let id_user = 999999; 
     const result_user = await new Auth().getUserByEmail(email);
     if (result_user?.rowCount > 0) {  
-      id_user = result_user.rows[0].id
+      id_user = result_user?.rows[0].id
     } 
       const existLikePick = await new Picks().getLikesByUserIdAndIp(ip_maq,id_user);
       let arrayInsert = []
           arrayInsert = existLikePick?.rowCount > 0 ? existLikePick.rows[0].id_pick_like  : arrayInsert
      
-      const flag = validarNumeroExistente(arrayInsert, exist.rows[0].id) 
+      const flag = validarNumeroExistente(arrayInsert, exist?.rows[0].id) 
         response.error = false;
         response.msg = `List picks`; 
         response.data =  exist.rows
@@ -76,7 +76,7 @@ router.post('/register_picks', async (req, res) => {
     let status = 400;
     response.error = true;
     
-    const { email,id_category, name_choice1, name_choice2  } = req.body;   
+    const { email,id_category, name_choice1, name_choice2 ,ulr_choice1,ulr_choice2 } = req.body;   
   
     let EDFile1 = req.files.photo1;  
     
@@ -107,8 +107,8 @@ router.post('/register_picks', async (req, res) => {
       return res.status(status).json(response);
     }
    
-    let result_insert_choice1 = await new Choice().createChoices(name_choice1, EDFile1.name);
-    let result_insert_choice2 = await new Choice().createChoices(name_choice2, EDFile2.name);
+    let result_insert_choice1 = await new Choice().createChoices(name_choice1, EDFile1.name,ulr_choice1);
+    let result_insert_choice2 = await new Choice().createChoices(name_choice2, EDFile2.name,ulr_choice2);
  
     if (!result_insert_choice1?.rowCount || result_insert_choice1?.rowCount === 0) {
       response.msg = 'An error occurred while trying to create choice_1';

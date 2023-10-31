@@ -14,6 +14,8 @@ class Picks {
         c2.name_choice AS choice2_name,
         c1.photo_choice AS photo1_name,
         c2.photo_choice AS photo2_name,
+        c1.url_choice AS url_choice1,
+        c2.url_choice AS url_choice2,
         COALESCE(p.likes::integer, 0) AS likes,
         p.status,
         p.created_at AS datePicked

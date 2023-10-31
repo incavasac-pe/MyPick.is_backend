@@ -12,11 +12,11 @@ class Choice {
         return results ;
     }
 
-    async createChoices(name_choice,photo ) {
+    async createChoices(name_choice,photo,ulr_choice ) {
         let response
         try {
-            const query = 'INSERT INTO mypick.choice (name_choice, photo_choice,selected) VALUES ($1, $2, $3) RETURNING id_choice';
-            const values = [name_choice,photo,'0'];
+            const query = 'INSERT INTO mypick.choice (name_choice, photo_choice,selected,url_choice) VALUES ($1, $2, $3,$4) RETURNING id_choice';
+            const values = [name_choice,photo,'0',ulr_choice];
             const result_insert = await db.query(query, values);           
             response = result_insert
        
