@@ -15,12 +15,11 @@ router.get('/list_all_picks', async (req, res) => {
     const response = newResponseJson();
     let status = 400; 
     response.error = true;  
-    const limit = req.query.limit ?? 100;
-    const id_category = req.query.id_category  ?? '';
+    const limit = req.query.limit ?? 100; 
     const ip_maq = req.query.ip_maq  ?? '';
     const email = req.query.emal  ?? '';
  
-     exist = await new Picks().getPicksAll(limit,id_category);
+     exist = await new Picks().getPicksAll(limit);
     if (exist?.rowCount === 0) {              
         response.msg = `picks empty`;        
     }else  {  
@@ -44,6 +43,28 @@ router.get('/list_all_picks', async (req, res) => {
     res.status(status).json(response)
 });
   
+
+router.get('/list_all_picks_search', async (req, res) => {
+  const response = newResponseJson();
+  let status = 400; 
+  response.error = true;   
+  const search = req.query.search  ?? '';
+
+   exist = await new Picks().getPicksAllSearch(search);
+  if (exist?.rowCount === 0) {              
+      response.msg = `Result not found`;        
+  }else  {  
+ 
+      response.error = false;
+      response.msg = `List picks search`; 
+      response.data =  exist.rows 
+      status = 200;        
+  }    
+  res.status(status).json(response)
+});
+
+
+
 router.get('/list_my_picks', async (req, res) => {
     const response = newResponseJson();
     let status = 400; 
