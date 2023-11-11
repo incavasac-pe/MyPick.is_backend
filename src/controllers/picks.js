@@ -2,7 +2,7 @@
 
 class Picks {
         
-    async getPicksAll(limit,id_category) { 
+    async getPicksAll(limit) { 
     let sql =   `SELECT
         p.id_pick AS id,
         c1.id_choice AS id_choice1,
@@ -23,9 +23,7 @@ class Picks {
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
       JOIN mypick.category c ON p.id_category::integer = c.id `;
-      if(id_category!=''){
-        sql+= ` WHERE p.id_category::integer=${id_category}`;
-      }
+   
       sql+=`  ORDER BY p.update_at asc  
        LIMIT ${limit}` 
         let results = await db.query(sql ).catch(console.log); 
@@ -214,6 +212,36 @@ async getLikesByUserIdAndIp(ip, id_user) {
     let results = await db.query(`SELECT mypick.actualizar_id_like($1, $2, $3)`, [ip,id_user,id_pick]).catch(console.log); 
     return results ;
   } 
+
+  
+        
+  async getPicksAllSearch(search) { 
+    let sql =   `SELECT
+        p.id_pick AS id,
+        c1.id_choice AS id_choice1,
+        c2.id_choice AS id_choice2,
+        c.name AS category,
+        c.status,
+        p.picks AS pick_ranking,
+        c1.name_choice AS choice1_name,
+        c2.name_choice AS choice2_name,
+        c1.photo_choice AS photo1_name,
+        c2.photo_choice AS photo2_name,
+        c1.url_choice AS url_choice1,
+        c2.url_choice AS url_choice2,
+        COALESCE(p.likes::integer, 0) AS likes,
+        p.status
+      FROM mypick.picks p
+      JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
+      JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
+      JOIN mypick.category c ON p.id_category::integer = c.id 
+      WHERE c1.name_choice ILIKE  '%${search}%' or  c2.name_choice ILIKE  '%${search}%'  
+      ORDER BY p.update_at asc`; 
+ 
+        let results = await db.query(sql ).catch(console.log); 
+        return results ;
+    }
+
 
 }
 
