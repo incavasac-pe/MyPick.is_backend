@@ -57,7 +57,7 @@ const base_url = process.env.BASE_URL;
                     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">     
                 </head>
                 <body>
-                <h1>Welcome to MyPick!</h1>
+                <h1>Welcome to MyPick.is!</h1>
                 <p>Please activate your account by clicking on the following link:</p>
                 <a href="${base_url}/activate?token=${token}">Activate account here</a>
                 </body>
@@ -67,7 +67,7 @@ const base_url = process.env.BASE_URL;
                 const emailOptions = {
                     from: process.env.USER_EMAIL,
                     to: email,
-                    subject: "Activation email",
+                    subject: "MyPick.Is activation email",
                     html: content
                 };
         
@@ -77,11 +77,9 @@ const base_url = process.env.BASE_URL;
                 })
                 .catch((error) => {
                     console.error("Failed to send email:", error); 
-                }); 
-                                    
+                });                                    
 
             }
-
 
             response.error = false;
             response.msg = `Successful registration`; 
@@ -142,7 +140,7 @@ router.get('/activate_account', async (req, res) => {
     if (result.rowCount == 0) {  
         response.msg = `User does not exist`;     
     } else{           
-        const result_act = await new Auth().activateUser(email);            
+        const result_act = await new Auth().activateUser(email);   
             if(result_act.rowCount >0){      
                 const token = jwt.sign({ email: email ,full_name:full_name},  process.env.SECRETKEY, { expiresIn: '1h' });
                 response.error = false;

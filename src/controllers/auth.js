@@ -25,7 +25,7 @@ class Auth {
        }  
        return response
     }
-
+/*
     async activateUser(email) {
         let response
         try {
@@ -38,7 +38,36 @@ class Auth {
         response = err;
        }  
        return response
-    }
+    }*/
+    async  activateUser(email) {
+        let response;
+      
+        try {
+          // Verificar el estatus actual del usuario
+          const checkQuery = 'SELECT status FROM mypick.users WHERE email = $1';
+          const checkResult = await db.query(checkQuery, [email]);
+      
+          if (checkResult.rows.length > 0) {
+            const currentStatus = checkResult.rows[0].status;
+      
+            // Si el estatus ya es "A", retornar 0
+            if (currentStatus === 'A') {
+              response = 0;
+              return response;
+            }
+          }
+      
+          // Actualizar el estatus y el token del usuario
+          const updateQuery = 'UPDATE mypick.users SET status = $1, token = $2 WHERE email = $3';
+          const updateValues = ['A', '', email];
+          const result = await db.query(updateQuery, updateValues);
+          response = result;
+        } catch (err) {
+          response = err;
+        }
+      
+        return response;
+      }
 
     async updateUser(password, email) {
         let response

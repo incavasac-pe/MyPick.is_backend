@@ -2,7 +2,7 @@
 
 class Picks {
         
-    async getPicksAll(limit) { 
+    async getPicksAll(limit,id) { 
     let sql =   `SELECT
         p.id_pick AS id,
         c1.id_choice AS id_choice1,
@@ -23,8 +23,11 @@ class Picks {
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
       JOIN mypick.category c ON p.id_category::integer = c.id `;
-   
-      sql+=`  ORDER BY p.update_at asc  
+      if(id!=''){
+          sql+= `WHERE p.id_pick != ${id}`
+      }
+    
+      sql+=` ORDER BY RANDOM() 
        LIMIT ${limit}` 
         let results = await db.query(sql ).catch(console.log); 
         return results ;
@@ -64,7 +67,7 @@ class Picks {
     async createPicks(id_category, id_choice1, id_choice2,id_user) {
         let response
         try {
-            const query = 'INSERT INTO mypick.picks (id_category, id_choice1, id_choice2,id_user,likes,picks) VALUES ($1, $2, $3, $4, $5, $6) RETURNING id_pick';
+            const query = 'INSERT INTO mypick.picks (id_category, id_choice1, id_choice2,id_user,likes,picks,update_at) VALUES ($1, $2, $3, $4, $5, $6,now()) RETURNING id_pick';
             const values = [id_category, id_choice1, id_choice2 ,id_user,'0','0'];
             const result_insert = await db.query(query, values);           
             response = result_insert

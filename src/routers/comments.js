@@ -41,7 +41,7 @@ router.post('/register_comments', async (req, res) => {
     }
 
     if (! bandera) {
-        const username = exist.rows[0].username;
+        const username = exist.rows[0].full_name;
         const id_user = exist.rows[0].id;
         let result_insert = await new Comments().createComment(id_pick, id_user, contenido, username);
 
