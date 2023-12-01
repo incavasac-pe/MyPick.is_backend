@@ -19,8 +19,9 @@ router.get('/list_all_picks', async (req, res) => {
     const ip_maq = req.query.ip_maq  ?? '';
     const email = req.query.email  ?? '';
     const id_pick = req.query.id_pick  ?? '';
+    const flag = req.query.flag  ?? false; 
  
-     exist = await new Picks().getPicksAll(limit,id_pick);
+     exist = await new Picks().getPicksAll(limit,id_pick,flag);
     if (exist?.rowCount === 0) {              
         response.msg = `picks empty`;        
     }else  {  

@@ -2,7 +2,7 @@
 
 class Picks {
         
-    async getPicksAll(limit,id) { 
+    async getPicksAll(limit,id,flag) { 
     let sql =   `SELECT
         p.id_pick AS id,
         c1.id_choice AS id_choice1,
@@ -23,8 +23,10 @@ class Picks {
       JOIN mypick.choice c1 ON p.id_choice1 = c1.id_choice
       JOIN mypick.choice c2 ON p.id_choice2 = c2.id_choice
       JOIN mypick.category c ON p.id_category::integer = c.id `;
-      if(id!=''){
+      if(id!='' && !flag){
           sql+= `WHERE p.id_pick != ${id}`
+      }else{
+        sql+= `WHERE p.id_pick = ${id}`
       }
     
       sql+=` ORDER BY RANDOM() 
