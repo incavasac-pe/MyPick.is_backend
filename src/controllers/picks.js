@@ -25,16 +25,16 @@ class Picks {
       JOIN mypick.category c ON p.id_category::integer = c.id `;
       if(id!='' && !flag){
           sql+= `WHERE p.id_pick != ${id}`
-      }else{
+      
+      }else if(id!='' && flag){ 
         sql+= `WHERE p.id_pick = ${id}`
       }
     
-      sql+=` ORDER BY RANDOM() 
-       LIMIT ${limit}` 
+      sql+=` ORDER BY RANDOM()  LIMIT ${limit}` 
         let results = await db.query(sql ).catch(console.log); 
         return results ;
-    }
-
+    
+  }
    
     async getPicks(user,id_category) {  
      let sql = `SELECT
