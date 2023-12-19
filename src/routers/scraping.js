@@ -52,4 +52,45 @@ router.get('/list_products_api_externa', async (req, res) => {
     });
           
 });
+
+router.get('/list_products_api_externa_new', async (req, res) => {
+  const response = newResponseJson();
+  let status = 400; 
+  response.error = true; 
+  const search = req.query.search; 
+ try {
+
+  const options = {
+    method: 'GET',
+    url: 'https://amazon-price1.p.rapidapi.com/search',
+    params: {
+      keywords:search,
+      marketplace: 'US'
+    },
+    headers: {
+      'X-RapidAPI-Key': '22913f82f7mshfb58b1d46e4ecf7p1f6f8fjsn879ce3efc174',
+      'X-RapidAPI-Host': 'amazon-price1.p.rapidapi.com'
+    }
+  };
+ // Nuevo objeto a agregar
+const newObj = {
+  ASIN: "QWEQWE",
+  title: "SELECT",
+  price: "0.0",
+  listPrice: "",
+  imageUrl: "https://m.media-amazon.com/images/QWE.jpg",
+  detailPageURL: "https://www.amazon.es/dp/QWEQWE"
+};
+
+	const produc = await axios.request(options);
+    response.data = produc.data
+    response.data.unshift(newObj);
+    res.status(status).json(response)
+  } catch (error) {
+    console.error(error);
+    res.status(status).json(response)
+  }
+    
+    
+});
 module.exports = router; 
