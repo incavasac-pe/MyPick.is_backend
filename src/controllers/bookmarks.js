@@ -17,6 +17,8 @@ class Bookmarks {
                     c2.name_choice AS choice2_name,
                     c1.photo_choice AS photo1_name,
                     c2.photo_choice AS photo2_name,
+                    c1.url_choice AS url1,
+                    c2.url_choice AS url2,
                     COALESCE(p.likes::integer, 0) AS likes,
                     p.status,
                     b.update_at AS datePicked, 
