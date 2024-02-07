@@ -93,13 +93,7 @@ router.get('/list_products_api_externa_new', async (req, res) => {
  
 async function adjustProductData(products) {
   const adjustedProducts = [ // Nuevo objeto a agregar
-  {
-    asin: "QWEQWE",
-    title: "SELECT",
-    product_price: "0.0", 
-    imageUrl: "https://m.media-amazon.com/images/QWE.jpg",
-    detailPageURL: "https://www.amazon.es/dp/QWEQWE"
-  }];
+];
   products.forEach((product) => {
     const adjustedProduct = {
       imageUrl: product.product_photo,
